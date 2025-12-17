@@ -43,16 +43,13 @@ def init_openai_client() -> Optional[openai.OpenAI]:
 
 openaiClient = init_openai_client()
 
-originsEnv = os.getenv(
+origins = os.getenv(
     "CORS_ORIGINS",
     "http://localhost:3000,http://127.0.0.1:3000"
-)
-
-origins = [o.strip() for o in originsEnv.split(",")]
-
+).split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=[o.strip() for o in origins if o.strip()],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
