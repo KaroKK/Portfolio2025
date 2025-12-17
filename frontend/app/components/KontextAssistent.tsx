@@ -214,7 +214,10 @@ export default function KontextAssistent({ open, introReady, aktiverModus, onTog
 
     setLaedt(true);
     try {
-      const antwort = await fetch("http://localhost:8000/aiSkillsLens", {
+      const apiBase = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "");
+      const endpoint = apiBase ? `${apiBase}/aiSkillsLens` : "/aiSkillsLens";
+
+      const antwort = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: eingabe }),

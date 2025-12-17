@@ -22,8 +22,6 @@ export default function SkillLensSeite() {
   }
 );
 
-console.log("API URL =", process.env.NEXT_PUBLIC_API_URL);
-
     const resultat = await antwort.json();
     setErgebnisText(resultat.analyse);
 
