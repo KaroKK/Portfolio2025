@@ -15,6 +15,7 @@ backend/venv/
 **/*.pyc
 .pytest_cache/
 .mypy_cache/
+.env.local
 
 # env
 .env*
