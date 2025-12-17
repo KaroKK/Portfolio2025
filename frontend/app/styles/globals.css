@@ -1,0 +1,75 @@
+:root {
+  --bg-0: #090b0f;
+  --bg-1: #0f1218;
+  --bg-2: #131722;
+  --glass: rgba(16, 20, 28, 0.65);
+  --glass-strong: rgba(18, 22, 30, 0.82);
+  --stroke: rgba(255, 255, 255, 0.04);
+  --stroke-strong: rgba(255, 255, 255, 0.08);
+  --accent: #74e8ff;
+  --accent-soft: #a5baff;
+  --muted: #8c95a3;
+  --text: #e8edf3;
+  --text-strong: #f7fbff;
+  --shadow-soft: 0 30px 80px rgba(0, 0, 0, 0.45);
+  --shadow-glow: 0 0 60px rgba(116, 232, 255, 0.12);
+  --radius-xl: 28px;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --font-space: "Space Grotesk", "Segoe UI", "Helvetica Neue", sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-space);
+  background: radial-gradient(circle at 20% 20%, rgba(116, 232, 255, 0.06), transparent 32%),
+    radial-gradient(circle at 80% 10%, rgba(165, 186, 255, 0.05), transparent 26%),
+    radial-gradient(circle at 50% 80%, rgba(116, 232, 255, 0.04), transparent 32%),
+    var(--bg-0);
+  color: var(--text);
+  overflow: hidden;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+p {
+  margin: 0;
+}
+
+button {
+  font-family: var(--font-space);
+}
+
+::selection {
+  background: rgba(116, 232, 255, 0.14);
+  color: var(--text-strong);
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
