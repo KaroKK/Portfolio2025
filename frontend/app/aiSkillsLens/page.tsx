@@ -18,8 +18,9 @@ const antwort = await fetch(
   {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(daten)
+    body: JSON.stringify(daten),
   }
+
 );
 
     const resultat = await antwort.json();
