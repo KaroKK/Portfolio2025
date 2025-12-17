@@ -13,15 +13,15 @@ export default function SkillLensSeite() {
 
     const daten = { text: eingabeText };
 
-const antwort = await fetch(
-  `${process.env.NEXT_PUBLIC_API_URL}/aiSkillsLens`,
+    const antwort = await fetch(
+  "https://portfoliokuster-backend.up.railway.app/aiSkillsLens",
   {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(daten), 
+    body: JSON.stringify(daten),
   }
-
 );
+
 console.log("API URL =", process.env.NEXT_PUBLIC_API_URL);
 
     const resultat = await antwort.json();
