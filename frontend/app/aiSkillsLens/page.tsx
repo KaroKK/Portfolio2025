@@ -33,7 +33,7 @@ console.log("API URL =", process.env.NEXT_PUBLIC_API_URL);
   return (
     <div style={{ padding: "40px", maxWidth: "800px", margin: "0 auto" }}>
       <h1 style={{ fontSize: "32px", marginBottom: "20px" }}>
-        
+         
       </h1>
 
       <textarea
