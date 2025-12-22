@@ -6,7 +6,7 @@ import { alleSkillNamen } from "../data/skills";
 import { projekte } from "../data/projects";
 import { ModusId } from "../types/modi";
 
-const skillAliases: Record<string, string[]> = {
+const skillAliasse: Record<string, string[]> = {
   ".NET (ASP.NET Core, Windows Forms, WPF)": [
     ".net",
     "net",
@@ -93,7 +93,8 @@ const skillAliases: Record<string, string[]> = {
   "Azure Logic Apps": ["azure logic apps", "logic apps"],
 };
 
-const normalizeText = (text: string) => {
+// Vereinheitlicht Texte, damit die Skill-Erkennung robuste Vergleiche durchführen kann.
+const normalisiereText = (text: string) => {
   return text
     .toLowerCase()
     .replace(/[^a-z0-9\u00e4\u00f6\u00fc\u00df.+#\s/-]/gi, " ")
@@ -101,7 +102,8 @@ const normalizeText = (text: string) => {
     .trim();
 };
 
-const matchesTerm = (text: string, term: string) => {
+// Prüft, ob ein Begriff im Text vorkommt – mit Wortgrenzen, damit kurze Tokens nicht falsch matchen.
+const trifftBegriff = (text: string, term: string) => {
   const candidate = term.toLowerCase().trim();
   if (!candidate) return false;
   const escaped = candidate.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -113,7 +115,7 @@ const matchesTerm = (text: string, term: string) => {
   return boundaryPattern.test(text);
 };
 
-const firstIndexOfTerm = (text: string, term: string): number => {
+const erstePositionDesBegriffs = (text: string, term: string): number => {
   const candidate = term.toLowerCase().trim();
   if (!candidate) return Number.POSITIVE_INFINITY;
   const escaped = candidate.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -131,8 +133,8 @@ const humanisiereAuswertung = (text: string) => {
     { pattern: /\bumfangreich(e[nrsm]?|es)?\b/gi, ersatz: "" },
     { pattern: /\b(exzellent|hervorragend|herausragend|ausgezeichnet|erstklassig)\b/gi, ersatz: "gut" },
     { pattern: /\bbeeindruckend(e[nrsm]?|es)?\b/gi, ersatz: "" },
-    { pattern: /\bausgepraegt(e[nrsm]?|es)?\b/gi, ersatz: "klar" },
-    { pattern: /\bbreit gefaecherte?n?\b/gi, ersatz: "breite" },
+    { pattern: /\bausgeprägt(e[nrsm]?|es)?\b/gi, ersatz: "klar" },
+    { pattern: /\bbreit gefächerte?n?\b/gi, ersatz: "breite" },
     { pattern: /\bstark(e[nrsm]?|es)?\b/gi, ersatz: "" },
   ];
 
@@ -169,7 +171,7 @@ type TrefferProjekt = {
 };
 
 const personaKontext =
-  "Sprachen: Deutsch (C1), Englisch (C1), Polnisch (Muttersprache). Standort: Berlin. Remote/Homeoffice bevorzugt, offen fuer Hybrid. Anspruch: automatisierte Tests, Clean Code, Architektur, Code-Qualitaet.";
+  "Sprachen: Deutsch (C1), Englisch (C1), Polnisch (Muttersprache). Standort: Berlin. Remote/Homeoffice bevorzugt, offen für Hybrid. Anspruch: automatisierte Tests, Clean Code, Architektur, Code-Qualität.";
 
 export default function KontextAssistent({ open, introReady, aktiverModus, onToggle, onHighlightSkills }: KontextAssistentProps) {
   const modusLabel: Record<ModusId, string> = {
@@ -194,6 +196,7 @@ export default function KontextAssistent({ open, introReady, aktiverModus, onTog
     setTrefferProjekte([]);
   }, [aktiverModus]);
 
+  // Prüft grob, welche Projekte thematisch zu den erkannten Skills passen.
   const findePassendeProjekte = (skills: string[]) => {
     const skillsLower = skills.map((s) => s.toLowerCase());
     return projekte
@@ -208,7 +211,7 @@ export default function KontextAssistent({ open, introReady, aktiverModus, onTog
 
   const analysiereText = async () => {
     if (!eingabe.trim()) {
-      setNotiz("Hier kannst du die Anforderungen einer Stelle oder ein komplettes Stellenangebot einfuegen. Das System prueft automatisch, wie gut diese Anforderungen zu meinen Skills und Projekten passen.");
+      setNotiz("Hier kannst du die Anforderungen einer Stelle oder ein komplettes Stellenangebot einfügen. Das System prüft automatisch, wie gut diese Anforderungen zu meinen Skills und Projekten passen.");
       return;
     }
 
@@ -225,15 +228,17 @@ export default function KontextAssistent({ open, introReady, aktiverModus, onTog
 
       const daten = await antwort.json();
       const auswertung = humanisiereAuswertung(daten.analyse || "");
-      const textGesamt = normalizeText(`${eingabe} ${personaKontext}`);
+      const textGesamt = normalisiereText(`${eingabe} ${personaKontext}`);
       const trefferSortiert = alleSkillNamen
         .map((skill) => {
-          const aliases = skillAliases[skill] ?? [];
+          const aliases = skillAliasse[skill] ?? [];
           const base = aliases.length ? aliases : [skill];
           const candidates = base.map((term) => term.toLowerCase());
-          const hits = candidates.filter((term) => matchesTerm(textGesamt, term));
+          const hits = candidates.filter((term) => trifftBegriff(textGesamt, term));
           if (!hits.length) return null;
-          const pos = Math.min(...candidates.map((term) => firstIndexOfTerm(textGesamt, term)).filter((v) => v >= 0));
+          const pos = Math.min(
+            ...candidates.map((term) => erstePositionDesBegriffs(textGesamt, term)).filter((v) => v >= 0)
+          );
           return { skill, pos };
         })
         .filter((entry): entry is { skill: string; pos: number } => Boolean(entry))
@@ -279,7 +284,7 @@ export default function KontextAssistent({ open, introReady, aktiverModus, onTog
         if (lower.startsWith("tech:")) return false;
         if (lower.startsWith("match:")) return false;
         if (lower.includes("frontend-entwicklung")) return false;
-        if (lower.includes("mehrjaehr")) return false;
+        if (lower.includes("mehrjaehr") || lower.includes("mehrjähr")) return false;
         return true;
       });
     if (!zeilen.length) return null;
@@ -301,7 +306,7 @@ export default function KontextAssistent({ open, introReady, aktiverModus, onTog
           <h3>Assistent</h3>
           <span className="brain-chip">{modusLabel[aktiverModus]} Modus</span>
         </div>
-        <button className="brain-icon-btn" onClick={onToggle} aria-label={open ? "Assistent schliessen" : "Assistent oeffnen"}>
+        <button className="brain-icon-btn" onClick={onToggle} aria-label={open ? "Assistent schließen" : "Assistent öffnen"}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path d="M6 6 18 18M18 6 6 18" strokeWidth="1.6" />
           </svg>
@@ -313,7 +318,7 @@ export default function KontextAssistent({ open, introReady, aktiverModus, onTog
 
         {hatAntwort && (
           <div className="brain-actions">
-            <button className="brain-icon-btn" onClick={schliesseAntwort} aria-label="Antwort schliessen">
+            <button className="brain-icon-btn" onClick={schliesseAntwort} aria-label="Antwort schließen">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path d="M6 6 18 18M18 6 6 18" strokeWidth="1.6" />
               </svg>
@@ -323,14 +328,14 @@ export default function KontextAssistent({ open, introReady, aktiverModus, onTog
 
         <textarea
           className="brain-textarea"
-          placeholder="Hier kannst du die Anforderungen einer Stelle oder ein komplettes Stellenangebot einfuegen. Das System prueft automatisch, wie gut diese Anforderungen zu meinen Skills und Projekten passen."
+          placeholder="Hier kannst du die Anforderungen einer Stelle oder ein komplettes Stellenangebot einfügen. Das System prüft automatisch, wie gut diese Anforderungen zu meinen Skills und Projekten passen."
           value={eingabe}
           onChange={(event) => setEingabe(event.target.value)}
         />
 
         <div className="brain-actions">
           <button className="brain-btn secondary" onClick={() => setEingabe("")}>
-            Reset
+            Zurücksetzen
           </button>
           <button className="brain-btn" onClick={analysiereText} disabled={laedt}>
             {laedt ? "Analysiere..." : "Auf Skills mappen"}
@@ -342,7 +347,7 @@ export default function KontextAssistent({ open, introReady, aktiverModus, onTog
             <div className="brain-section">
               <div className="brain-section-title">Analyse</div>
               <div className="brain-note small">
-                {baueNotizListe(notiz) || <span className="brain-line">{notiz || "Mapping bereit. Markierte Skills zeigen die Naehe."}</span>}
+                {baueNotizListe(notiz) || <span className="brain-line">{notiz || "Mapping bereit. Markierte Skills zeigen die Nähe."}</span>}
               </div>
             </div>
 

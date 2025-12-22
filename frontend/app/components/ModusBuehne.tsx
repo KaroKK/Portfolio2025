@@ -15,7 +15,7 @@ type ModusBuehneProps = {
   aktiverModus: ModusId;
   markierteSkills: string[];
   onOpenBrain: () => void;
-  brainOpen: boolean;
+  assistentGeoeffnet: boolean;
 };
 
 const modusMeta: Record<ModusId, { title: string; subline: string }> = {
@@ -37,18 +37,18 @@ const modusMeta: Record<ModusId, { title: string; subline: string }> = {
   },
 };
 
-export default function ModusBuehne({ aktiverModus, markierteSkills, onOpenBrain, brainOpen }: ModusBuehneProps) {
-  const frameRef = useRef<HTMLDivElement | null>(null);
-  const sceneRef = useRef<HTMLDivElement | null>(null);
-  const initialRenderRef = useRef(true);
+export default function ModusBuehne({ aktiverModus, markierteSkills, onOpenBrain, assistentGeoeffnet }: ModusBuehneProps) {
+  const rahmenRef = useRef<HTMLDivElement | null>(null);
+  const szeneRef = useRef<HTMLDivElement | null>(null);
+  const ersteRenderungRef = useRef(true);
 
   useLayoutEffect(() => {
-    const frame = frameRef.current;
-    const scene = sceneRef.current;
+    const frame = rahmenRef.current;
+    const scene = szeneRef.current;
     if (!frame || !scene) return;
 
-    if (initialRenderRef.current) {
-      initialRenderRef.current = false;
+    if (ersteRenderungRef.current) {
+      ersteRenderungRef.current = false;
       return;
     }
 
@@ -83,12 +83,13 @@ export default function ModusBuehne({ aktiverModus, markierteSkills, onOpenBrain
   }, [aktiverModus]);
 
   useEffect(() => {
-    const frame = frameRef.current;
-    const scene = sceneRef.current;
+    const frame = rahmenRef.current;
+    const scene = szeneRef.current;
     if (!frame || !scene) return;
     const glow = frame.querySelector(".stage-glow");
+    if (window.innerWidth < 720) return; // Auf kleinen Screens keine Maus-Parallax, um Performance zu schonen
 
-    const moveScene = (event: PointerEvent) => {
+    const bewegeSzene = (event: PointerEvent) => {
       const bounds = frame.getBoundingClientRect();
       const relX = (event.clientX - bounds.left) / bounds.width - 0.5;
       const relY = (event.clientY - bounds.top) / bounds.height - 0.5;
@@ -99,19 +100,19 @@ export default function ModusBuehne({ aktiverModus, markierteSkills, onOpenBrain
       }
     };
 
-    const resetScene = () => {
+    const szeneZuruecksetzen = () => {
       gsap.to(scene, { x: 0, y: 0, duration: 0.8, ease: "power3.out" });
       if (glow) {
         gsap.to(glow, { x: 0, y: 0, duration: 0.8, ease: "power3.out" });
       }
     };
 
-    frame.addEventListener("pointermove", moveScene);
-    frame.addEventListener("pointerleave", resetScene);
+    frame.addEventListener("pointermove", bewegeSzene);
+    frame.addEventListener("pointerleave", szeneZuruecksetzen);
 
     return () => {
-      frame.removeEventListener("pointermove", moveScene);
-      frame.removeEventListener("pointerleave", resetScene);
+      frame.removeEventListener("pointermove", bewegeSzene);
+      frame.removeEventListener("pointerleave", szeneZuruecksetzen);
     };
   }, []);
 
@@ -122,8 +123,8 @@ export default function ModusBuehne({ aktiverModus, markierteSkills, onOpenBrain
   if (aktiverModus === "kontakt") inhalt = <ModusKontakt />;
 
   return (
-    <div className={`stage-area ${brainOpen ? "with-brain" : ""}`}>
-      <div className="stage-frame" ref={frameRef}>
+    <div className={`stage-area ${assistentGeoeffnet ? "with-brain" : ""}`}>
+      <div className="stage-frame" ref={rahmenRef}>
         <div className="stage-header">
           <div className="stage-title">
             <span className="soft-pill">Modus</span>
@@ -137,7 +138,7 @@ export default function ModusBuehne({ aktiverModus, markierteSkills, onOpenBrain
 
         <div className="stage-body">
           <div className="stage-glow" aria-hidden="true" />
-          <div key={aktiverModus} className="scene-scroll" ref={sceneRef}>
+          <div key={aktiverModus} className="scene-scroll" ref={szeneRef}>
             {inhalt}
           </div>
         </div>

@@ -9,7 +9,7 @@ import ModusBuehne from "./components/ModusBuehne";
 import KontextAssistent from "./components/KontextAssistent";
 import { ModusId } from "./types/modi";
 
-const parallaxShapes = [
+const parallaxFormen = [
   { id: "ring-1", className: "parallax-ring", left: "14%", top: "62%", depth: 18 },
   { id: "ring-2", className: "parallax-ring", left: "72%", top: "30%", depth: 20 },
   { id: "ring-3", className: "parallax-ring", left: "46%", top: "44%", depth: 16 },
@@ -20,12 +20,34 @@ export default function HomePage() {
   const [assistentOffen, setAssistentOffen] = useState(true);
   const [introReady, setIntroReady] = useState(false);
   const [markierteSkills, setMarkierteSkills] = useState<string[]>([]);
-  const shellRef = useRef<HTMLDivElement | null>(null);
-  const parallaxRef = useRef<HTMLDivElement | null>(null);
+  const [reduzierteBewegung, setReduzierteBewegung] = useState(false);
+  const huelleRef = useRef<HTMLDivElement | null>(null);
+  const parallaxEbeneRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    // Öffne den Assistenten beim ersten Laden 
+    // Öffne den Assistenten beim ersten Laden
     setAssistentOffen(true);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const preferenceHandler = (event: MediaQueryListEvent) => setReduzierteBewegung(event.matches);
+
+    setReduzierteBewegung(mediaQuery.matches);
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener("change", preferenceHandler);
+    } else {
+      mediaQuery.addListener(preferenceHandler);
+    }
+
+    return () => {
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener("change", preferenceHandler);
+      } else {
+        mediaQuery.removeListener(preferenceHandler);
+      }
+    };
   }, []);
 
   const eindeutigeMarkierungen = useMemo(
@@ -34,7 +56,11 @@ export default function HomePage() {
   );
 
   useLayoutEffect(() => {
-    const shell = shellRef.current;
+    if (reduzierteBewegung) {
+      setIntroReady(true);
+      return;
+    }
+    const shell = huelleRef.current;
     if (!shell) return;
 
     const ctx = gsap.context(() => {
@@ -46,10 +72,11 @@ export default function HomePage() {
     }, shell);
 
     return () => ctx.revert();
-  }, []);
+  }, [reduzierteBewegung]);
 
   useLayoutEffect(() => {
-    const layer = parallaxRef.current;
+    if (reduzierteBewegung) return;
+    const layer = parallaxEbeneRef.current;
     if (!layer) return;
 
     const ctx = gsap.context(() => {
@@ -64,10 +91,11 @@ export default function HomePage() {
     }, layer);
 
     return () => ctx.revert();
-  }, []);
+  }, [reduzierteBewegung]);
 
   useEffect(() => {
-    const layer = parallaxRef.current;
+    if (reduzierteBewegung) return;
+    const layer = parallaxEbeneRef.current;
     if (!layer) return;
     const items = Array.from(layer.querySelectorAll<HTMLElement>(".parallax-floating"));
     const movers = items.map((el) => ({
@@ -76,6 +104,7 @@ export default function HomePage() {
     }));
 
     const handlePointerMove = (event: PointerEvent) => {
+      if (window.innerWidth < 640) return; // Parallax bei sehr kleinen Screens aus Performance-Gründen deaktivieren
       const { innerWidth, innerHeight } = window;
       const shiftX = (event.clientX / innerWidth - 0.5) * 24;
       const shiftY = (event.clientY / innerHeight - 0.5) * 18;
@@ -103,11 +132,11 @@ export default function HomePage() {
   const schalteAssistent = () => setAssistentOffen((state) => !state);
 
   return (
-    <div className="page-shell" ref={shellRef}>
-      <div className="background-layer" ref={parallaxRef} aria-hidden="true">
+    <div className="page-shell" ref={huelleRef}>
+      <div className="background-layer" ref={parallaxEbeneRef} aria-hidden="true">
         <div className="bg-mesh" />
         <div className="glass-veil" />
-        {parallaxShapes.map((shape) => (
+        {parallaxFormen.map((shape) => (
           <span
             key={shape.id}
             className={`parallax-floating ${shape.className}`}
@@ -129,7 +158,7 @@ export default function HomePage() {
           aktiverModus={aktiverModus}
           markierteSkills={eindeutigeMarkierungen}
           onOpenBrain={oeffneAssistent}
-          brainOpen={assistentOffen}
+          assistentGeoeffnet={assistentOffen}
         />
 
         <KontextAssistent

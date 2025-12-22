@@ -14,13 +14,13 @@ type ModusProjekteProps = {
 
 export default function ModusProjekte({ onOpenBrain }: ModusProjekteProps) {
   const [offenesProjekt, setOffenesProjekt] = useState<Projekt | null>(null);
-  const [isClient, setIsClient] = useState(false);
-  const cardsRef = useRef<HTMLAnchorElement[]>([]);
-  const gridRef = useRef<HTMLDivElement | null>(null);
+  const [istClient, setIstClient] = useState(false);
+  const kartenRef = useRef<HTMLAnchorElement[]>([]);
+  const gitterRef = useRef<HTMLDivElement | null>(null);
   void onOpenBrain;
 
   useEffect(() => {
-    setIsClient(true);
+    setIstClient(true);
   }, []);
 
   useLayoutEffect(() => {
@@ -34,7 +34,7 @@ export default function ModusProjekte({ onOpenBrain }: ModusProjekteProps) {
         ease: "power3.out",
         stagger: 0.08,
       });
-    }, gridRef);
+    }, gitterRef);
 
     return () => ctx.revert();
   }, []);
@@ -63,8 +63,8 @@ export default function ModusProjekte({ onOpenBrain }: ModusProjekteProps) {
     return () => ctx.revert();
   }, [offenesProjekt]);
 
-  const handleCardMove = (event: React.MouseEvent, index: number) => {
-    const card = cardsRef.current[index];
+  const bewegeKarte = (event: React.MouseEvent, index: number) => {
+    const card = kartenRef.current[index];
     if (!card) return;
     const rect = card.getBoundingClientRect();
     const relX = (event.clientX - rect.left) / rect.width - 0.5;
@@ -80,13 +80,13 @@ export default function ModusProjekte({ onOpenBrain }: ModusProjekteProps) {
     });
   };
 
-  const resetCard = (index: number) => {
-    const card = cardsRef.current[index];
+  const karteZuruecksetzen = (index: number) => {
+    const card = kartenRef.current[index];
     if (!card) return;
     gsap.to(card, { rotationY: 0, rotationX: 0, y: 0, duration: 0.6, ease: "power3.out" });
   };
 
-  const modalContent =
+  const modalInhalt =
     offenesProjekt && (
       <div className="project-modal" role="dialog" aria-modal="true" onClick={() => setOffenesProjekt(null)}>
         <div
@@ -121,7 +121,7 @@ export default function ModusProjekte({ onOpenBrain }: ModusProjekteProps) {
                 Zum Projekt
               </a>
               <button className="project-close-btn" type="button" onClick={() => setOffenesProjekt(null)}>
-                Schliessen
+                Schließen
               </button>
             </div>
           </div>
@@ -131,11 +131,7 @@ export default function ModusProjekte({ onOpenBrain }: ModusProjekteProps) {
 
   return (
     <div className="scene-card">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-               
-      </div>
-
-      <div className="scene-grid" ref={gridRef}>
+      <div className="scene-grid" ref={gitterRef}>
         {projekte.map((projekt, index) => (
           <a
             key={projekt.titel}
@@ -144,10 +140,10 @@ export default function ModusProjekte({ onOpenBrain }: ModusProjekteProps) {
             target="_blank"
             rel="noreferrer"
             ref={(el) => {
-              if (el) cardsRef.current[index] = el;
+              if (el) kartenRef.current[index] = el;
             }}
-            onMouseMove={(event) => handleCardMove(event, index)}
-            onMouseLeave={() => resetCard(index)}
+            onMouseMove={(event) => bewegeKarte(event, index)}
+            onMouseLeave={() => karteZuruecksetzen(index)}
           >
             <div
               className="project-thumb"
@@ -179,7 +175,7 @@ export default function ModusProjekte({ onOpenBrain }: ModusProjekteProps) {
                   }
                 }}
               >
-                Vergoessern
+                Vergrößern
               </span>
             </div>
             <div className="project-focus">{projekt.fokus}</div>
@@ -196,7 +192,7 @@ export default function ModusProjekte({ onOpenBrain }: ModusProjekteProps) {
         ))}
       </div>
 
-      {isClient && modalContent ? createPortal(modalContent, document.body) : null}
+      {istClient && modalInhalt ? createPortal(modalInhalt, document.body) : null}
     </div>
   );
 }

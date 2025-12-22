@@ -37,7 +37,7 @@ const kontaktpunkte: KontaktItem[] = [
   {
     titel: "Standort",
     link: "Berlin (Remote offen)",
-    href: '',
+    href: "",
     meta: "Zeitzone CET",
     beschreibung: " ",
   },
@@ -45,7 +45,7 @@ const kontaktpunkte: KontaktItem[] = [
 
 export default function ModusKontakt() {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const cardRefs = useRef<HTMLAnchorElement[]>([]);
+  const kartenRefs = useRef<HTMLAnchorElement[]>([]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -56,7 +56,7 @@ export default function ModusKontakt() {
       );
 
       gsap.fromTo(
-        cardRefs.current,
+        kartenRefs.current,
         { opacity: 0, y: 16, scale: 0.97 },
         { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "power3.out", stagger: 0.08, delay: 0.1 }
       );
@@ -85,7 +85,7 @@ export default function ModusKontakt() {
             target="_blank"
             rel="noopener noreferrer"
             ref={(el) => {
-              if (el) cardRefs.current[index] = el;
+              if (el) kartenRefs.current[index] = el;
             }}
           >
             <div className="contact-card-head">

@@ -10,11 +10,11 @@ type UeberblickProps = {
 
 export default function ModusUeberblick({ onOpenBrain }: UeberblickProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const firstRenderRef = useRef(true);
+  const ersteDarstellungRef = useRef(true);
 
   useLayoutEffect(() => {
-    if (firstRenderRef.current) {
-      firstRenderRef.current = false;
+    if (ersteDarstellungRef.current) {
+      ersteDarstellungRef.current = false;
       return;
     }
     const ctx = gsap.context(() => {
@@ -57,9 +57,9 @@ export default function ModusUeberblick({ onOpenBrain }: UeberblickProps) {
             <h3>Wie ich denke</h3>
           </span>
           <p className="fact-line">
-            Ich arbeite strukturiert und neugierig. Wenn ich mich mit einem Thema beschaeftige, moechte ich es wirklich
-            verstehen, nicht nur oberflaechlich, sondern im Zusammenhang. In kurzer Zeit habe ich mir breites technisches
-            Verstaendnis aufgebaut, weil ich neue Technologien aktiv ausprobiere und gerne dazulerne.
+            Ich arbeite strukturiert und neugierig. Wenn ich mich mit einem Thema beschäftige, möchte ich es wirklich
+            verstehen, nicht nur oberflächlich, sondern im Zusammenhang. In kurzer Zeit habe ich mir breites technisches
+            Verständnis aufgebaut, weil ich neue Technologien aktiv ausprobiere und gerne dazulerne.
           </p>
         </div>
 
@@ -70,8 +70,8 @@ export default function ModusUeberblick({ onOpenBrain }: UeberblickProps) {
           </span>
           <p className="fact-line">
             Ich entwickle Webanwendungen mit Fokus auf klare Logik, gute Struktur und sinnvolle Schnittstellen. Besonders gerne
-            arbeite ich an Projekten, bei denen Systeme zusammenkommen oder Prozesse automatisiert werden koennen. Es motiviert
-            mich, mich in neue Themen einzuarbeiten und Schritt fuer Schritt funktionierende Loesungen zu bauen.
+            arbeite ich an Projekten, bei denen Systeme zusammenkommen oder Prozesse automatisiert werden können. Es motiviert
+            mich, mich in neue Themen einzuarbeiten und Schritt für Schritt funktionierende Lösungen zu bauen.
           </p>
         </div>
 
@@ -82,7 +82,7 @@ export default function ModusUeberblick({ onOpenBrain }: UeberblickProps) {
           </span>
           <p className="fact-line">
             KI-basierte Anwendungen, LLMs und GenAI in der Praxis, vor allem dort, wo sie echten Mehrwert bringen. Healthcare-IT
-            finde ich spannend, besonders aus Sicht der Softwareentwicklung und der Automatisierung von Ablaeufen. Durch
+            finde ich spannend, besonders aus Sicht der Softwareentwicklung und der Automatisierung von Abläufen. Durch
             praktische Einblicke in reale Prozesse hat sich dieses Interesse weiter vertieft.
           </p>
         </div>

@@ -260,5 +260,77 @@
     height: auto;
     right: 0;
     left: 0;
+    margin-top: 12px;
+    padding: 16px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .brain-body {
+    max-height: none;
+    overflow: visible;
+  }
+}
+
+@media (max-width: 720px) {
+  .side-brain {
+    gap: 12px;
+    padding: 14px;
+    border-radius: var(--radius-md);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .brain-header {
+    align-items: flex-start;
+  }
+
+  .brain-title h3 {
+    font-size: 16px;
+  }
+
+  .brain-chip {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .brain-actions {
+    flex-wrap: wrap;
+  }
+
+  .brain-btn {
+    flex: 1 1 100%;
+  }
+
+  .brain-btn.secondary {
+    flex: 1 1 100%;
+  }
+
+  .brain-icon-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .brain-textarea {
+    min-height: 140px;
+    font-size: 13px;
+  }
+
+  .brain-note {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 540px) {
+  .side-brain {
+    padding: 12px;
+  }
+
+  .brain-results {
+    gap: 10px;
+  }
+
+  .brain-section {
+    gap: 4px;
   }
 }

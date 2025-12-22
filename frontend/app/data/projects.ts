@@ -19,15 +19,15 @@ export type Projekt = {
 
 export const projekte: Projekt[] = [
   {
-    titel: "Dicognose Prueftool fuer DICOM",
-    beschreibung: "Web-App zur technischen Pruefung von DICOM-Kommunikation. PACS - C-Store und RIS-Worklist.",
+    titel: "Dicognose Prüftool für DICOM",
+    beschreibung: "Web-App zur technischen Prüfung von DICOM-Kommunikation. PACS - C-Store und RIS-Worklist.",
     fokus: "Healthcare IT - DICOM Tests",
     stack: ["Python", "Flask", "pynetdicom", "SQLite", "LDAP"],
     link: "#",
     image: dicognoseImg,
-    alt: "Dicognose DICOM Prueftool UI",
+    alt: "Dicognose DICOM Prüftool UI",
   },
-    {
+  {
     titel: "TandemFinder - Mitbewohner finden für die Wohnungssuche",
     beschreibung: "Matching von Wohn- und Mitbewohner-Konstellationen mit Swipe/Match-Logik.",
     fokus: "Matching - Plattform",
@@ -38,27 +38,26 @@ export const projekte: Projekt[] = [
   },
   {
     titel: "Roomy Raumbelegung",
-    beschreibung: "Echtzeit-Anzeige der aktuellen Raumauslastung (belegt/ frei) über Webex-Sensoren und Darstellung der geplanten Outlook-Kalendertermine pro Raum mit Zeitraum und Organisator.                   ***** Aus Datenschutzgründen wurden echte Daten durch Beispielwerte ersetzt.*****",
+    beschreibung:
+      "Echtzeit-Anzeige der aktuellen Raumauslastung (belegt/ frei) über Webex-Sensoren und Darstellung der geplanten Outlook-Kalendertermine pro Raum mit Zeitraum und Organisator. ***** Aus Datenschutzgründen wurden echte Daten durch Beispielwerte ersetzt.*****",
     fokus: "IoT - Kalender-Integration",
-    stack: ["Python", "Flask", "Webex Sensoren Integration", "Microsoft Graph API - für Termine aus Outlook", "OAuth2 Client Credentials"],
+    stack: ["Python", "Flask", "Webex-Sensoren-Integration", "Microsoft Graph API - für Termine aus Outlook", "OAuth2 Client Credentials"],
     link: "#",
     image: roomyImg,
     alt: "Roomy Raumbelegung Dashboard",
   },
-
   {
     titel: "FinDaily Finanzverwaltung",
-    beschreibung: "Verwaltung und Auswertung persoenlicher Finanzen mit interaktiven Dashboards.",
+    beschreibung: "Verwaltung und Auswertung persönlicher Finanzen mit interaktiven Dashboards.",
     fokus: "Finance - Dashboards",
     stack: ["ASP.NET Core", "PostgreSQL", "React + Vite", "Chart.js", "GSAP"],
     link: "#",
     image: findailyImg,
     alt: "FinDaily Finanzdashboard",
   },
-  
   {
     titel: "Tomitos Productions Portfolio",
-    beschreibung: "Web-Portfolio fuer Film- und Videoprojekte mit Fokus auf visuelles Storytelling.",
+    beschreibung: "Web-Portfolio für Film- und Videoprojekte mit Fokus auf visuelles Storytelling.",
     fokus: "Media - Interaktion",
     stack: ["Python", "Flask", "Jinja2", "Tailwind CSS", "JavaScript", "GSAP", "ScrollTrigger"],
     link: "https://www.tomitosproductions.com/",
@@ -81,6 +80,6 @@ export const projekte: Projekt[] = [
     stack: ["PHP", "MySQL", "HTML"],
     link: "#",
     image: phpImg,
-    alt: "Forumoberflaeche",
+    alt: "Forumoberfläche",
   },
 ];

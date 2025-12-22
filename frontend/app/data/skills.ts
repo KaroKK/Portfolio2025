@@ -24,7 +24,7 @@ export const skillGruppen: SkillGruppe[] = [
   {
     id: "frameworks",
     titel: "Frameworks & Tools",
-    beschreibung: "Tolls für Frontend, Backend und UI-Bewegung.",
+    beschreibung: "Tools für Frontend, Backend und UI-Bewegung.",
     skills: [
       { name: "Next.js", level: 70 },
       { name: "React", level: 70 },
