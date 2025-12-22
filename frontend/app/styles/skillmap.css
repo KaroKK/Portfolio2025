@@ -27,9 +27,9 @@
   position: relative;
   min-height: 500px;
   background:
-    linear-gradient(150deg, rgba(255, 255, 255, 0.01), rgba(116, 232, 255, 0.05)),
-    radial-gradient(circle at 40% 40%, rgba(116, 232, 255, 0.06), transparent 40%),
-    radial-gradient(circle at 72% 70%, rgba(165, 186, 255, 0.06), transparent 42%);
+    linear-gradient(160deg, rgba(12, 16, 24, 0.92), rgba(12, 16, 24, 0.88)),
+    radial-gradient(circle at 40% 40%, rgba(116, 232, 255, 0.04), transparent 40%),
+    radial-gradient(circle at 72% 70%, rgba(165, 186, 255, 0.05), transparent 42%);
   border: 1px solid var(--stroke);
   border-radius: var(--radius-lg);
   padding: 16px;
@@ -182,5 +182,60 @@
 @media (max-width: 1080px) {
   .skill-map {
     min-height: 360px;
+  }
+}
+
+@media (max-width: 900px) {
+  .skill-map {
+    min-height: 340px;
+    padding: 12px;
+    border-radius: var(--radius-md);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.32);
+  }
+
+  .skill-map-canvas {
+    height: 300px;
+    margin-bottom: 12px;
+  }
+
+  .skill-node {
+    min-width: 140px;
+    padding: 10px 12px;
+  }
+
+  .skill-core {
+    width: 104px;
+    height: 104px;
+  }
+
+  .skill-details-row {
+    padding: 10px;
+    border-radius: var(--radius-md);
+  }
+
+  .skill-subskills-row {
+    gap: 8px;
+  }
+}
+
+@media (max-width: 640px) {
+  .skill-map {
+    min-height: 300px;
+    background: linear-gradient(160deg, rgba(10, 12, 18, 0.96), rgba(10, 12, 18, 0.9));
+  }
+
+  .skill-map-canvas {
+    height: 260px;
+  }
+
+  .skill-node {
+    min-width: 120px;
+    padding: 9px 10px;
+  }
+
+  .skill-core {
+    width: 90px;
+    height: 90px;
+    font-size: 13px;
   }
 }

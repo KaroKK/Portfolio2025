@@ -16,6 +16,7 @@ type ModusBuehneProps = {
   markierteSkills: string[];
   onOpenBrain: () => void;
   assistentGeoeffnet: boolean;
+  onToggleBrain: () => void;
 };
 
 const modusMeta: Record<ModusId, { title: string; subline: string }> = {
@@ -37,7 +38,13 @@ const modusMeta: Record<ModusId, { title: string; subline: string }> = {
   },
 };
 
-export default function ModusBuehne({ aktiverModus, markierteSkills, onOpenBrain, assistentGeoeffnet }: ModusBuehneProps) {
+export default function ModusBuehne({
+  aktiverModus,
+  markierteSkills,
+  onOpenBrain,
+  assistentGeoeffnet,
+  onToggleBrain,
+}: ModusBuehneProps) {
   const rahmenRef = useRef<HTMLDivElement | null>(null);
   const szeneRef = useRef<HTMLDivElement | null>(null);
   const ersteRenderungRef = useRef(true);
@@ -134,6 +141,14 @@ export default function ModusBuehne({ aktiverModus, markierteSkills, onOpenBrain
             </div>
           </div>
 
+          <button
+            type="button"
+            className="brain-toggle-mobile"
+            onClick={onToggleBrain}
+            aria-label={assistentGeoeffnet ? "Assistent schließen" : "Assistent öffnen"}
+          >
+            {assistentGeoeffnet ? "Assistent aus" : "Assistent an"}
+          </button>
         </div>
 
         <div className="stage-body">

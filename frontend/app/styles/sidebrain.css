@@ -264,6 +264,7 @@
     padding: 16px;
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-soft);
+    border: 1px solid rgba(116, 232, 255, 0.12);
   }
 
   .brain-body {
@@ -292,6 +293,7 @@
   .brain-chip {
     padding: 6px 10px;
     font-size: 12px;
+    border-width: 1px;
   }
 
   .brain-actions {
