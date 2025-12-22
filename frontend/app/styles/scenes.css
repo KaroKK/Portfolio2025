@@ -523,4 +523,27 @@
     overflow: visible;
     padding-right: 0;
   }
+
+  .project-thumb {
+    min-height: 220px;
+  }
+
+  .project-card {
+    padding: 14px;
+    border-radius: var(--radius-md);
+  }
+
+  .contact-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .project-thumb {
+    min-height: 180px;
+  }
+
+  .scene-grid {
+    gap: 10px;
+  }
 }

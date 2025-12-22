@@ -340,10 +340,11 @@
   }
 
   .stage-frame {
-    min-height: 78vh;
+    min-height: auto;
     padding: 18px;
     border-radius: var(--radius-lg);
     gap: 16px;
+    overflow: visible;
   }
 
   .stage-header {
@@ -406,6 +407,8 @@
     padding: 16px;
     gap: 14px;
     min-height: auto;
+    overflow: visible;
+    border-radius: var(--radius-md);
   }
 
   .stage-title h1 {
@@ -418,6 +421,18 @@
 
   .stage-body {
     min-height: auto;
+    padding: 0;
+  }
+
+  .scene-card {
+    padding: 14px;
+    border-radius: var(--radius-md);
+    box-shadow: none;
+  }
+
+  .scene-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
 }
 
@@ -448,6 +463,10 @@
 
   .left-rail {
     gap: 10px;
+  }
+
+  .scene-card {
+    padding: 12px;
   }
 }
 
