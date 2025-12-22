@@ -1,180 +1,176 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import gsap from "gsap";
 import "./styles/shell.css";
 import "./styles/sidebrain.css";
-import { projekte } from "./data/projects";
-import { skillGruppen } from "./data/skills";
+import ModusNavigation from "./components/ModusNavigation";
+import ModusBuehne from "./components/ModusBuehne";
 import KontextAssistent from "./components/KontextAssistent";
+import { ModusId } from "./types/modi";
 
-const kontaktwege = [
-  { label: "Mail", value: "kuster.karolina@yahoo.com", href: "mailto:kuster.karolina@yahoo.com", hint: "Antwort < 24h" },
-  { label: "LinkedIn", value: "linkedin.com/in/karolina-kuster-ba278b394/", href: "https://www.linkedin.com/in/karolina-kuster-ba278b394/", hint: "Vernetzen" },
-  { label: "GitHub", value: "github.com/#", href: "https://github.com/#", hint: "Code & Projekte" },
+const parallaxFormen = [
+  { id: "ring-1", className: "parallax-ring", left: "14%", top: "62%", depth: 18 },
+  { id: "ring-2", className: "parallax-ring", left: "72%", top: "30%", depth: 20 },
+  { id: "ring-3", className: "parallax-ring", left: "46%", top: "44%", depth: 16 },
 ];
 
 export default function HomePage() {
-  const [assistentOffen, setAssistentOffen] = useState(false);
+  const [aktiverModus, setAktiverModus] = useState<ModusId>("ueberblick");
+  const [assistentOffen, setAssistentOffen] = useState(true);
+  const [introReady, setIntroReady] = useState(false);
   const [markierteSkills, setMarkierteSkills] = useState<string[]>([]);
-  const eindeutigeMarkierungen = useMemo(() => Array.from(new Set(markierteSkills)), [markierteSkills]);
+  const [reduzierteBewegung, setReduzierteBewegung] = useState(false);
+  const huelleRef = useRef<HTMLDivElement | null>(null);
+  const parallaxEbeneRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => setAssistentOffen(false), []);
+  useEffect(() => {
+    // Öffne den Assistenten beim ersten Laden
+    setAssistentOffen(true);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const preferenceHandler = (event: MediaQueryListEvent) => setReduzierteBewegung(event.matches);
+
+    setReduzierteBewegung(mediaQuery.matches);
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener("change", preferenceHandler);
+    } else {
+      mediaQuery.addListener(preferenceHandler);
+    }
+
+    return () => {
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener("change", preferenceHandler);
+      } else {
+        mediaQuery.removeListener(preferenceHandler);
+      }
+    };
+  }, []);
+
+  const eindeutigeMarkierungen = useMemo(
+    () => Array.from(new Set(markierteSkills)),
+    [markierteSkills]
+  );
+
+  useLayoutEffect(() => {
+    if (reduzierteBewegung) {
+      setIntroReady(true);
+      return;
+    }
+    const shell = huelleRef.current;
+    if (!shell) return;
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      tl.from(".bg-mesh", { opacity: 0, scale: 1.01, duration: 0.6, ease: "power2.out" })
+        .from(".parallax-floating", { opacity: 0, scale: 0.94, duration: 0.5, stagger: 0.02 }, "-=0.35")
+        .from([".left-rail", ".stage-frame"], { opacity: 0, y: 8, duration: 0.35, stagger: 0 }, "-=0.25");
+      tl.eventCallback("onComplete", () => setIntroReady(true));
+    }, shell);
+
+    return () => ctx.revert();
+  }, [reduzierteBewegung]);
+
+  useLayoutEffect(() => {
+    if (reduzierteBewegung) return;
+    const layer = parallaxEbeneRef.current;
+    if (!layer) return;
+
+    const ctx = gsap.context(() => {
+      gsap.to(".parallax-floating", {
+        y: "+=6",
+        duration: 3.2,
+        ease: "sine.inOut",
+        repeat: -1,
+        yoyo: true,
+        stagger: { amount: 1.4, from: "random" },
+      });
+    }, layer);
+
+    return () => ctx.revert();
+  }, [reduzierteBewegung]);
+
+  useEffect(() => {
+    if (reduzierteBewegung) return;
+    const layer = parallaxEbeneRef.current;
+    if (!layer) return;
+    const items = Array.from(layer.querySelectorAll<HTMLElement>(".parallax-floating"));
+    const movers = items.map((el) => ({
+      x: gsap.quickTo(el, "x", { duration: 0.6, ease: "power2.out" }),
+      y: gsap.quickTo(el, "y", { duration: 0.6, ease: "power2.out" }),
+    }));
+
+    const handlePointerMove = (event: PointerEvent) => {
+      if (window.innerWidth < 640) return; // Parallax bei sehr kleinen Screens aus Performance-Gründen deaktivieren
+      const { innerWidth, innerHeight } = window;
+      const shiftX = (event.clientX / innerWidth - 0.5) * 24;
+      const shiftY = (event.clientY / innerHeight - 0.5) * 18;
+
+      items.forEach((el, index) => {
+        const depth = Number(el.dataset.depth ?? "12");
+        movers[index].x(shiftX / depth);
+        movers[index].y(shiftY / depth);
+      });
+    };
+
+    window.addEventListener("pointermove", handlePointerMove);
+    return () => window.removeEventListener("pointermove", handlePointerMove);
+  }, []);
+
+  const wechsleModus = (modus: ModusId) => {
+    setAktiverModus(modus);
+  };
+
+  const markiereSkills = (skills: string[]) => {
+    setMarkierteSkills(skills);
+  };
+
+  const oeffneAssistent = () => setAssistentOffen(true);
+  const schalteAssistent = () => setAssistentOffen((state) => !state);
 
   return (
-    <div className="modern-page">
-      <header className="topbar">
-        <div>
-          <div className="eyebrow">Full-Stack & KI</div>
-          <h1>Karolina Kuster</h1>
-        </div>
-        <nav className="top-nav">
-          <a href="#projects">Projekte</a>
-          <a href="#skills">Skills</a>
-          <a href="#contact">Kontakt</a>
-        </nav>
-        <div className="top-cta">
-          <a className="btn ghost" href="#projects">Projekte</a>
-          <a className="btn solid" href="#contact">Kontakt</a>
-        </div>
-      </header>
+    <div className="page-shell" ref={huelleRef}>
+      <div className="background-layer" ref={parallaxEbeneRef} aria-hidden="true">
+        <div className="bg-mesh" />
+        <div className="glass-veil" />
+        {parallaxFormen.map((shape) => (
+          <span
+            key={shape.id}
+            className={`parallax-floating ${shape.className}`}
+            style={{ left: shape.left, top: shape.top }}
+            data-depth={shape.depth}
+          />
+        ))}
+      </div>
 
-      <main className="page-content">
-        <section className="hero">
-          <div className="hero-copy">
-            <p className="eyebrow">Ich baue Webanwendungen & KI-Integrationen</p>
-            <h2>Schnelle Prototypen, saubere Architektur, Fokus auf Nutzwert.</h2>
-            <p className="lede">
-              Frontend/Backend mit TypeScript, Python und .NET plus Automatisierung und LLM-Integrationen. Remote aus Berlin.
-            </p>
-            <div className="hero-actions">
-              <a className="btn solid" href="#projects">Meine Arbeit</a>
-              <button className="btn ghost" onClick={() => setAssistentOffen(true)}>Requirements einfügen</button>
-            </div>
-            <div className="hero-tags">
-              <span>Next.js</span>
-              <span>FastAPI</span>
-              <span>Docker</span>
-              <span>CI/CD</span>
-            </div>
-          </div>
-          <div className="hero-card">
-            <div className="hero-highlight">
-              <div>
-                <div className="pill">Letztes Projekt</div>
-                <h3>Healthcare DICOM Prüftool</h3>
-                <p>Technische Tests für PACS/RIS mit Python & Flask.</p>
-              </div>
-              <a className="text-link" href="#projects">Details ansehen</a>
-            </div>
-            <div className="hero-stats">
-              <div><strong>10+</strong><span>Projekte</span></div>
-              <div><strong>3</strong><span>Sprachen</span></div>
-              <div><strong>CI/CD</strong><span>Produktiv</span></div>
-            </div>
-          </div>
-        </section>
+      <div className="interface-layer">
+        <ModusNavigation
+          aktiverModus={aktiverModus}
+          onModusChange={wechsleModus}
+          assistentOffen={assistentOffen}
+          onToggleBrain={schalteAssistent}
+        />
 
-        <section className="section" id="stack">
-          <div className="section-head">
-            <div>
-              <div className="eyebrow">Stack & Tools</div>
-              <h3>Technologien, die ich aktiv nutze</h3>
-            </div>
-          </div>
-          <div className="stack-scroller">
-            {skillGruppen.flatMap((gruppe) => gruppe.skills).slice(0, 12).map((skill) => (
-              <div key={skill.name} className={`stack-chip ${eindeutigeMarkierungen.includes(skill.name) ? "highlight" : ""}`}>
-                <div>{skill.name}</div>
-              </div>
-            ))}
-          </div>
-        </section>
+        <ModusBuehne
+          aktiverModus={aktiverModus}
+          markierteSkills={eindeutigeMarkierungen}
+          onOpenBrain={oeffneAssistent}
+          assistentGeoeffnet={assistentOffen}
+          onToggleBrain={schalteAssistent}
+          onModusChange={wechsleModus}
+        />
 
-        <section className="section" id="projects">
-          <div className="section-head">
-            <div>
-              <div className="eyebrow">Projekte</div>
-              <h3>Ausgewählte Arbeiten</h3>
-            </div>
-          </div>
-          <div className="project-grid">
-            {projekte.map((projekt) => (
-              <article key={projekt.titel} className="project-card-modern">
-                <div className="project-thumb-modern">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={projekt.image.src} alt={projekt.alt} loading="lazy" />
-                  <div className="project-pill">{projekt.fokus}</div>
-                </div>
-                <div className="project-body">
-                  <h4>{projekt.titel}</h4>
-                  <p>{projekt.beschreibung}</p>
-                  <div className="project-tags">
-                    {projekt.stack.slice(0, 4).map((tech) => (
-                      <span key={tech}>{tech}</span>
-                    ))}
-                  </div>
-                  <a className="text-link" href={projekt.link} target="_blank" rel="noreferrer">Zum Projekt</a>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="section" id="skills">
-          <div className="section-head">
-            <div>
-              <div className="eyebrow">Capabilities</div>
-              <h3>Schwerpunkte und Stärken</h3>
-            </div>
-          </div>
-          <div className="capability-grid">
-            {skillGruppen.map((gruppe) => (
-              <div key={gruppe.id} className="capability-card">
-                <div className="capability-head">
-                  <h4>{gruppe.titel}</h4>
-                  <p>{gruppe.beschreibung}</p>
-                </div>
-                <div className="capability-tags">
-                  {gruppe.skills.map((skill) => {
-                    const markiert = eindeutigeMarkierungen.includes(skill.name);
-                    return <span key={skill.name} className={markiert ? "hit" : ""}>{skill.name}</span>;
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="section" id="contact">
-          <div className="section-head">
-            <div>
-              <div className="eyebrow">Kontakt</div>
-              <h3>Lass uns sprechen</h3>
-            </div>
-          </div>
-          <div className="contact-grid-modern">
-            {kontaktwege.map((k) => (
-              <a key={k.label} href={k.href} className="contact-card-modern" target="_blank" rel="noreferrer">
-                <div className="pill subtle">{k.hint}</div>
-                <h4>{k.label}</h4>
-                <p>{k.value}</p>
-              </a>
-            ))}
-          </div>
-        </section>
-      </main>
-
-      <button className="assistant-fab" onClick={() => setAssistentOffen(true)} aria-label="Assistent öffnen">
-        Assist
-      </button>
-
-      <KontextAssistent
-        open={assistentOffen}
-        introReady={true}
-        aktiverModus="ueberblick"
-        onToggle={() => setAssistentOffen((o) => !o)}
-        onHighlightSkills={setMarkierteSkills}
-      />
+        <KontextAssistent
+          open={assistentOffen}
+          introReady={introReady}
+          aktiverModus={aktiverModus}
+          onToggle={schalteAssistent}
+          onHighlightSkills={markiereSkills}
+        />
+      </div>
     </div>
   );
 }
