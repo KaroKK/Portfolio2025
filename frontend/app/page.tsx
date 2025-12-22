@@ -160,6 +160,7 @@ export default function HomePage() {
           onOpenBrain={oeffneAssistent}
           assistentGeoeffnet={assistentOffen}
           onToggleBrain={schalteAssistent}
+          onModusChange={wechsleModus}
         />
 
         <KontextAssistent

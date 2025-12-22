@@ -64,6 +64,7 @@
   transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
   transform-style: preserve-3d;
   perspective: 1200px;
+  width: 100%;
 }
 
 .project-card::after {
@@ -508,6 +509,10 @@
 }
 
 @media (max-width: 720px) {
+  .scene-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+
   .project-modal-body {
     grid-template-columns: 1fr;
     width: min(98vw, 1100px);
@@ -539,6 +544,10 @@
 }
 
 @media (max-width: 640px) {
+  .scene-grid {
+    grid-template-columns: 1fr;
+  }
+
   .project-thumb {
     min-height: 180px;
   }

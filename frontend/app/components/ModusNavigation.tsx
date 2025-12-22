@@ -4,13 +4,13 @@ import React from "react";
 import "../styles/shell.css";
 import { ModusId } from "../types/modi";
 
-type NavItem = {
+export type NavItem = {
   id: ModusId;
   label: string;
   icon: React.ReactElement;
 };
 
-const navItems: NavItem[] = [
+export const navItems: NavItem[] = [
   {
     id: "ueberblick",
     label: "About me",

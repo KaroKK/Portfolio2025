@@ -310,24 +310,7 @@
   }
 
   .left-rail {
-    flex-direction: row;
-    height: auto;
-    position: relative;
-    padding: 12px;
-    justify-content: space-between;
-    width: 100%;
-    gap: 14px;
-  }
-
-  .rail-headline {
-    writing-mode: horizontal-tb;
-  }
-
-  .rail-buttons {
-    flex-direction: row;
-    justify-content: flex-start;
-    gap: 12px;
-    flex-wrap: wrap;
+    display: none;
   }
 
   .stage-area {
@@ -340,6 +323,7 @@
   }
 
   .stage-frame {
+    height: auto;
     min-height: auto;
     padding: 18px;
     border-radius: var(--radius-lg);
@@ -371,30 +355,6 @@
     gap: 12px;
   }
 
-  .left-rail {
-    padding: 10px;
-    gap: 12px;
-    overflow-x: auto;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .rail-headline {
-    font-size: 11px;
-    letter-spacing: 0.14em;
-  }
-
-  .rail-buttons {
-    flex-wrap: nowrap;
-    gap: 10px;
-  }
-
-  .rail-button {
-    width: 56px;
-    height: 56px;
-    border-radius: 14px;
-  }
-
   .stage-area {
     padding-right: 0;
   }
@@ -404,6 +364,7 @@
   }
 
   .stage-frame {
+    height: auto;
     padding: 16px;
     gap: 14px;
     min-height: auto;
@@ -437,10 +398,6 @@
 }
 
 @media (max-width: 540px) {
-  .rail-headline {
-    display: none;
-  }
-
   .stage-header {
     flex-direction: column;
     align-items: flex-start;
@@ -488,10 +445,58 @@
   transform: translateY(-1px);
 }
 
+.header-mobile-actions {
+  display: none;
+}
+
 @media (max-width: 720px) {
   .brain-toggle-mobile {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+  }
+
+  .header-mobile-actions {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .mobile-nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 8px;
+  }
+
+  .mobile-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid var(--stroke);
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--text);
+    font-size: 13px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+  }
+
+  .mobile-nav-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .mobile-nav-btn.active {
+    border-color: rgba(116, 232, 255, 0.5);
+    background: rgba(116, 232, 255, 0.08);
+    box-shadow: 0 10px 30px rgba(116, 232, 255, 0.1);
+  }
+
+  .mobile-nav-btn:hover {
+    border-color: rgba(116, 232, 255, 0.35);
+    transform: translateY(-1px);
   }
 }

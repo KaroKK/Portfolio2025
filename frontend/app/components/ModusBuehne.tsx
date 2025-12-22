@@ -10,6 +10,7 @@ import ModusUeberblick from "./modi/ModusUeberblick";
 import ModusSkills from "./modi/ModusSkills";
 import ModusProjekte from "./modi/ModusProjekte";
 import ModusKontakt from "./modi/ModusKontakt";
+import { navItems } from "./ModusNavigation";
 
 type ModusBuehneProps = {
   aktiverModus: ModusId;
@@ -17,6 +18,7 @@ type ModusBuehneProps = {
   onOpenBrain: () => void;
   assistentGeoeffnet: boolean;
   onToggleBrain: () => void;
+  onModusChange: (modus: ModusId) => void;
 };
 
 const modusMeta: Record<ModusId, { title: string; subline: string }> = {
@@ -44,6 +46,7 @@ export default function ModusBuehne({
   onOpenBrain,
   assistentGeoeffnet,
   onToggleBrain,
+  onModusChange,
 }: ModusBuehneProps) {
   const rahmenRef = useRef<HTMLDivElement | null>(null);
   const szeneRef = useRef<HTMLDivElement | null>(null);
@@ -141,14 +144,30 @@ export default function ModusBuehne({
             </div>
           </div>
 
-          <button
-            type="button"
-            className="brain-toggle-mobile"
-            onClick={onToggleBrain}
-            aria-label={assistentGeoeffnet ? "Assistent schließen" : "Assistent öffnen"}
-          >
-            {assistentGeoeffnet ? "Assistent aus" : "Assistent an"}
-          </button>
+          <div className="header-mobile-actions">
+            <nav className="mobile-nav">
+              {navItems.map((item) => (
+                <button
+                  key={item.id}
+                  className={`mobile-nav-btn ${aktiverModus === item.id ? "active" : ""}`}
+                  onClick={() => onModusChange(item.id)}
+                  aria-label={item.label}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </button>
+              ))}
+            </nav>
+
+            <button
+              type="button"
+              className="brain-toggle-mobile"
+              onClick={onToggleBrain}
+              aria-label={assistentGeoeffnet ? "Assistent schließen" : "Assistent öffnen"}
+            >
+              {assistentGeoeffnet ? "Assistent aus" : "Assistent an"}
+            </button>
+          </div>
         </div>
 
         <div className="stage-body">
