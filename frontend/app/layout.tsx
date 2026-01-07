@@ -1,21 +1,29 @@
 import "./styles/globals.css";
-import { Space_Grotesk } from "next/font/google";
+import { Manrope, Syne } from "next/font/google";
 
-const spaceGrotesk = Space_Grotesk({
+const syne = Syne({
   subsets: ["latin"],
-  variable: "--font-space-grotesk",
+  variable: "--font-display",
+  weight: ["400", "600", "700", "800"],
+  display: "swap",
+});
+
+const manrope = Manrope({
+  subsets: ["latin"],
+  variable: "--font-body",
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
 export const metadata = {
-  title: "Karolina Kuster - Anwendungsentwicklung & KI - Full-Stack Developer",
-  description: "Frontend- und Backend-Entwicklung, KI-Integration und mehr.",
+  title: "Karolina Kuster - Full-stack & AI Engineering",
+  description: "Web, AI und Produktentwicklung mit Fokus auf klare Architektur und Delivery.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="de">
-      <body className={spaceGrotesk.variable}>{children}</body>
+      <body className={`${manrope.variable} ${syne.variable}`}>{children}</body>
     </html>
   );
 }

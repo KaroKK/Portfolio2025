@@ -1,45 +1,38 @@
 .side-brain {
-  position: fixed;
-  top: 24px;
-  right: 24px;
-  width: 430px;
-  height: calc(100vh - 48px);
-  padding: 22px;
+  position: relative;
+  width: 100%;
+  padding: 20px;
   border-radius: var(--radius-lg);
-  background: linear-gradient(180deg, rgba(16, 20, 28, 0.92), rgba(16, 20, 28, 0.86));
-  border: 1px solid rgba(116, 232, 255, 0.18);
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.45));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-tight);
   backdrop-filter: blur(18px);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35), var(--shadow-glow);
+  -webkit-backdrop-filter: blur(18px);
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  transform: translateX(0);
-  transition: transform 0.4s ease, opacity 0.4s ease;
-  z-index: 24;
+  gap: 18px;
+  transform: translateY(0);
+  transition: transform 0.3s ease, opacity 0.3s ease;
   opacity: 1;
-  visibility: visible;
-  will-change: transform, opacity;
 }
 
 .side-brain.preload {
   opacity: 0;
-  visibility: hidden;
-  transform: translateY(10px);
+  transform: translateY(12px);
   pointer-events: none;
 }
 
 .side-brain.closed {
-  transform: translateY(12px);
   opacity: 0;
-  visibility: hidden;
+  transform: translateY(16px);
   pointer-events: none;
 }
-
 
 .brain-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
 }
 
 .brain-title {
@@ -50,116 +43,130 @@
 
 .brain-title h3 {
   margin: 0;
-  font-size: 18px;
-  letter-spacing: 0.03em;
+  font-size: 19px;
+  font-family: var(--font-display);
 }
 
 .brain-chip {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(116, 232, 255, 0.08);
+  background: rgba(43, 110, 243, 0.12);
   color: var(--accent);
-  border: 1px solid rgba(116, 232, 255, 0.2);
-  border-radius: 999px;
-  padding: 8px 12px;
-  font-size: 13px;
+  border: 1px solid rgba(43, 110, 243, 0.35);
+  border-radius: 12px;
+  padding: 6px 12px;
+  font-size: 12px;
+  line-height: 1;
+  min-height: 28px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .brain-body {
-  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
+  max-height: 72vh;
   overflow: auto;
-  max-height: calc(100vh - 180px);
 }
 
 .brain-note {
-  font-size: 15px;
-  color: var(--text);
+  font-size: 14px;
+  color: var(--muted);
   line-height: 1.6;
-  border: 1px solid var(--stroke);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
-  padding: 14px;
-  background: rgba(255, 255, 255, 0.01);
+  padding: 12px;
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .brain-note.small {
-  font-size: 13px;
-  line-height: 1.5;
+  font-size: 12px;
 }
 
 .brain-textarea {
   width: 100%;
-  min-height: 160px;
+  min-height: 170px;
   border-radius: var(--radius-md);
-  border: 1px solid var(--stroke);
-  background: rgba(255, 255, 255, 0.02);
-  color: var(--text);
-  padding: 14px;
-  font-size: 14px;
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--ink);
+  padding: 12px;
+  font-size: 13px;
   resize: vertical;
 }
 
 .brain-actions {
   display: flex;
-  gap: 12px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .brain-icon-btn {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   display: grid;
   place-items: center;
   border-radius: 50%;
-  border: 1px solid var(--stroke);
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--text);
+  border: 1px solid var(--glass-border);
+  background: var(--glass);
+  color: var(--ink);
   cursor: pointer;
-  transition: border-color 0.25s ease, transform 0.25s ease, background 0.25s ease;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .brain-icon-btn:hover {
-  border-color: rgba(116, 232, 255, 0.4);
-  background: rgba(116, 232, 255, 0.08);
   transform: translateY(-1px);
+  border-color: var(--line-strong);
 }
 
 .brain-btn {
   flex: 1;
-  padding: 12px 14px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--stroke);
-  background: linear-gradient(135deg, rgba(116, 232, 255, 0.12), rgba(255, 255, 255, 0.02));
-  color: var(--text);
-  font-size: 14px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: linear-gradient(120deg, var(--accent), var(--accent-cool));
+  color: #f7fbff;
+  font-size: 13px;
   cursor: pointer;
-  transition: border-color 0.25s ease, transform 0.25s ease;
+  transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 .brain-btn.secondary {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--glass);
+  border-color: var(--glass-border);
+  color: var(--ink);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .brain-btn:hover {
-  border-color: rgba(116, 232, 255, 0.4);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
+  border-color: var(--line-strong);
 }
 
 .brain-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 10px;
 }
 
 .brain-pill {
-  padding: 10px 12px;
-  border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--stroke);
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
   color: var(--muted);
-  font-size: 13px;
+  font-size: 12px;
+  line-height: 1;
+  min-height: 28px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .brain-highlight {
@@ -170,8 +177,8 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  border-top: 1px solid var(--stroke);
-  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
 }
 
 .brain-section {
@@ -182,8 +189,10 @@
 
 .brain-section-title {
   font-weight: 600;
-  font-size: 13px;
-  color: var(--text);
+  font-size: 12px;
+  color: var(--ink);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .brain-tags {
@@ -193,12 +202,16 @@
 }
 
 .brain-tag {
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--stroke);
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--text);
-  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass);
+  color: var(--ink);
+  font-size: 11px;
+  line-height: 1;
+  min-height: 26px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .brain-listing {
@@ -207,7 +220,7 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .brain-listing.compact {
@@ -216,7 +229,7 @@
 
 .brain-project-title {
   font-weight: 600;
-  color: var(--text);
+  color: var(--ink);
 }
 
 .brain-project-sub {
@@ -239,100 +252,21 @@
   font-size: 12px;
 }
 
-@media (max-width: 1280px) {
+@media (max-width: 760px) {
   .side-brain {
-    position: fixed;
-    width: min(420px, 94vw);
-    height: auto;
-    bottom: 18px;
-    top: auto;
-    right: 18px;
-  }
-}
-
-@media (max-width: 960px) {
-  .side-brain {
-    position: relative;
-    transform: none !important;
-    opacity: 1;
-    pointer-events: auto;
-    width: 100%;
-    height: auto;
-    right: 0;
-    left: 0;
-    margin-top: 12px;
-    padding: 16px;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-soft);
-    border: 1px solid rgba(116, 232, 255, 0.12);
-  }
-
-  .brain-body {
-    max-height: none;
-    overflow: visible;
-  }
-}
-
-@media (max-width: 720px) {
-  .side-brain {
-    gap: 12px;
     padding: 14px;
     border-radius: var(--radius-md);
-    backdrop-filter: blur(12px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
-  }
-
-  .brain-header {
-    align-items: flex-start;
   }
 
   .brain-title h3 {
     font-size: 16px;
   }
 
-  .brain-chip {
-    padding: 6px 10px;
-    font-size: 12px;
-    border-width: 1px;
-  }
-
   .brain-actions {
-    flex-wrap: wrap;
+    flex-direction: column;
   }
 
   .brain-btn {
-    flex: 1 1 100%;
-  }
-
-  .brain-btn.secondary {
-    flex: 1 1 100%;
-  }
-
-  .brain-icon-btn {
-    width: 32px;
-    height: 32px;
-  }
-
-  .brain-textarea {
-    min-height: 140px;
-    font-size: 13px;
-  }
-
-  .brain-note {
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 540px) {
-  .side-brain {
-    padding: 12px;
-  }
-
-  .brain-results {
-    gap: 10px;
-  }
-
-  .brain-section {
-    gap: 4px;
+    width: 100%;
   }
 }

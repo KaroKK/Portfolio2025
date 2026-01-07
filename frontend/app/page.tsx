@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import gsap from "gsap";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "./styles/shell.css";
 import "./styles/sidebrain.css";
 import ModusNavigation from "./components/ModusNavigation";
@@ -9,168 +10,424 @@ import ModusBuehne from "./components/ModusBuehne";
 import KontextAssistent from "./components/KontextAssistent";
 import { ModusId } from "./types/modi";
 
-const parallaxFormen = [
-  { id: "ring-1", className: "parallax-ring", left: "14%", top: "62%", depth: 18 },
-  { id: "ring-2", className: "parallax-ring", left: "72%", top: "30%", depth: 20 },
-  { id: "ring-3", className: "parallax-ring", left: "46%", top: "44%", depth: 16 },
+const navItems = [
+  { label: "Start", href: "#top" },
+  { label: "Fakten", href: "#facts" },
+  { label: "Projekte", href: "#projects" },
+  { label: "Skills", href: "#skills" },
+  { label: "Kontakt", href: "#contact" },
+];
+
+const kontaktWege = [
+  { label: "Mail", value: "kuster.karolina@yahoo.com", href: "mailto:kuster.karolina@yahoo.com", hint: "Antwort < 24h" },
+  { label: "LinkedIn", value: "linkedin.com/in/karolina-kuster-ba278b394/", href: "https://www.linkedin.com/in/karolina-kuster-ba278b394/", hint: "Vernetzen" },
+  { label: "GitHub", value: "github.com/#", href: "https://github.com/#", hint: "Code & Projekte" },
+];
+
+const kernStack = ["TypeScript", "Next.js", "React", "Python", "FastAPI", "Flask", "Docker", "CI/CD", "PostgreSQL", ".NET"];
+
+const fakty = [
+  { value: "10+", label: "projekte (web, iot, healthcare)" },
+  { value: "3", label: "sprachen: DE / EN / PL" },
+  { value: "Berlin", label: "remote / hybrid" },
+  { value: "Stack", label: "TypeScript / Python / .NET" },
+  { value: "LLM", label: "integrationen + automationen" },
+  { value: "CI/CD", label: "tests + deployment" },
 ];
 
 export default function HomePage() {
-  const [aktiverModus, setAktiverModus] = useState<ModusId>("ueberblick");
-  const [assistentOffen, setAssistentOffen] = useState(true);
-  const [introReady, setIntroReady] = useState(false);
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const [ausgewaehltesProjekt, setAusgewaehltesProjekt] = useState<(typeof projekte)[number] | null>(null);
   const [markierteSkills, setMarkierteSkills] = useState<string[]>([]);
-  const [reduzierteBewegung, setReduzierteBewegung] = useState(false);
-  const huelleRef = useRef<HTMLDivElement | null>(null);
-  const parallaxEbeneRef = useRef<HTMLDivElement | null>(null);
+  const [zeigeAlleSkills, setZeigeAlleSkills] = useState(false);
+  const [mobileMenuOffen, setMobileMenuOffen] = useState(false);
+  const [scrollTopSichtbar, setScrollTopSichtbar] = useState(false);
+
+  const eindeutigeMarkierungen = useMemo(() => Array.from(new Set(markierteSkills)), [markierteSkills]);
+  const sichtbareSkills = (skills: { name: string }[]) => (zeigeAlleSkills ? skills : skills.slice(0, 6));
 
   useEffect(() => {
-    // Öffne den Assistenten beim ersten Laden
-    setAssistentOffen(true);
+    const onScroll = () => setScrollTopSichtbar(window.scrollY > 320);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = mobileMenuOffen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenuOffen]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const preferenceHandler = (event: MediaQueryListEvent) => setReduzierteBewegung(event.matches);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    setReduzierteBewegung(mediaQuery.matches);
-    if (mediaQuery.addEventListener) {
-      mediaQuery.addEventListener("change", preferenceHandler);
-    } else {
-      mediaQuery.addListener(preferenceHandler);
-    }
-
-    return () => {
-      if (mediaQuery.removeEventListener) {
-        mediaQuery.removeEventListener("change", preferenceHandler);
-      } else {
-        mediaQuery.removeListener(preferenceHandler);
-      }
-    };
-  }, []);
-
-  const eindeutigeMarkierungen = useMemo(
-    () => Array.from(new Set(markierteSkills)),
-    [markierteSkills]
-  );
-
-  useLayoutEffect(() => {
-    if (reduzierteBewegung) {
-      setIntroReady(true);
-      return;
-    }
-    const shell = huelleRef.current;
-    if (!shell) return;
-
+    gsap.registerPlugin(ScrollTrigger);
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-      tl.from(".bg-mesh", { opacity: 0, scale: 1.01, duration: 0.6, ease: "power2.out" })
-        .from(".parallax-floating", { opacity: 0, scale: 0.94, duration: 0.5, stagger: 0.02 }, "-=0.35")
-        .from([".left-rail", ".stage-frame"], { opacity: 0, y: 8, duration: 0.35, stagger: 0 }, "-=0.25");
-      tl.eventCallback("onComplete", () => setIntroReady(true));
-    }, shell);
+      ScrollTrigger.batch("[data-reveal]", {
+        start: "top 85%",
+        onEnter: (batch) => {
+          gsap.fromTo(
+            batch,
+            { y: 28, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.9, ease: "power3.out", stagger: 0.12 }
+          );
+        },
+        once: true,
+      });
+
+      gsap.utils.toArray<HTMLElement>("[data-float]").forEach((shape, index) => {
+        const direction = index % 2 === 0 ? 1 : -1;
+        gsap.to(shape, {
+          y: direction * 140,
+          x: direction * 80,
+          rotate: direction * 8,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".page-shell",
+            start: "top top",
+            end: "bottom bottom",
+            scrub: true,
+          },
+        });
+      });
+
+      gsap.utils.toArray<HTMLElement>("[data-media]").forEach((media) => {
+        gsap.fromTo(
+          media,
+          { scale: 0.96, opacity: 0.85 },
+          {
+            scale: 1,
+            opacity: 1,
+            duration: 1,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: media,
+              start: "top 80%",
+            },
+          }
+        );
+      });
+    }, rootRef);
 
     return () => ctx.revert();
-  }, [reduzierteBewegung]);
-
-  useLayoutEffect(() => {
-    if (reduzierteBewegung) return;
-    const layer = parallaxEbeneRef.current;
-    if (!layer) return;
-
-    const ctx = gsap.context(() => {
-      gsap.to(".parallax-floating", {
-        y: "+=6",
-        duration: 3.2,
-        ease: "sine.inOut",
-        repeat: -1,
-        yoyo: true,
-        stagger: { amount: 1.4, from: "random" },
-      });
-    }, layer);
-
-    return () => ctx.revert();
-  }, [reduzierteBewegung]);
-
-  useEffect(() => {
-    if (reduzierteBewegung) return;
-    const layer = parallaxEbeneRef.current;
-    if (!layer) return;
-    const items = Array.from(layer.querySelectorAll<HTMLElement>(".parallax-floating"));
-    const movers = items.map((el) => ({
-      x: gsap.quickTo(el, "x", { duration: 0.6, ease: "power2.out" }),
-      y: gsap.quickTo(el, "y", { duration: 0.6, ease: "power2.out" }),
-    }));
-
-    const handlePointerMove = (event: PointerEvent) => {
-      if (window.innerWidth < 640) return; // Parallax bei sehr kleinen Screens aus Performance-Gründen deaktivieren
-      const { innerWidth, innerHeight } = window;
-      const shiftX = (event.clientX / innerWidth - 0.5) * 24;
-      const shiftY = (event.clientY / innerHeight - 0.5) * 18;
-
-      items.forEach((el, index) => {
-        const depth = Number(el.dataset.depth ?? "12");
-        movers[index].x(shiftX / depth);
-        movers[index].y(shiftY / depth);
-      });
-    };
-
-    window.addEventListener("pointermove", handlePointerMove);
-    return () => window.removeEventListener("pointermove", handlePointerMove);
   }, []);
-
-  const wechsleModus = (modus: ModusId) => {
-    setAktiverModus(modus);
-  };
-
-  const markiereSkills = (skills: string[]) => {
-    setMarkierteSkills(skills);
-  };
-
-  const oeffneAssistent = () => setAssistentOffen(true);
-  const schalteAssistent = () => setAssistentOffen((state) => !state);
 
   return (
-    <div className="page-shell" ref={huelleRef}>
-      <div className="background-layer" ref={parallaxEbeneRef} aria-hidden="true">
-        <div className="bg-mesh" />
-        <div className="glass-veil" />
-        {parallaxFormen.map((shape) => (
-          <span
-            key={shape.id}
-            className={`parallax-floating ${shape.className}`}
-            style={{ left: shape.left, top: shape.top }}
-            data-depth={shape.depth}
-          />
-        ))}
+    <div className="page-shell" ref={rootRef}>
+      <div className="ambient-layer" aria-hidden="true">
+        <span className="float-shape shape-one" data-float />
+        <span className="float-shape shape-two" data-float />
+        <span className="float-shape shape-three" data-float />
+        <span className="float-line shape-four" data-float />
       </div>
 
-      <div className="interface-layer">
-        <ModusNavigation
-          aktiverModus={aktiverModus}
-          onModusChange={wechsleModus}
-          assistentOffen={assistentOffen}
-          onToggleBrain={schalteAssistent}
-        />
+      <header className="site-header">
+        <div className="logo">
+          <div className="logo-mark">KK</div>
+          <div className="logo-copy">
+            <span className="logo-title">Karolina Kuster</span>
+            <span className="logo-sub">Full-stack & AI Engineering</span>
+          </div>
+        </div>
 
-        <ModusBuehne
-          aktiverModus={aktiverModus}
-          markierteSkills={eindeutigeMarkierungen}
-          onOpenBrain={oeffneAssistent}
-          assistentGeoeffnet={assistentOffen}
-          onToggleBrain={schalteAssistent}
-          onModusChange={wechsleModus}
-        />
+        <nav className="site-nav">
+          {navItems.map((item) => (
+            <a key={item.href} href={item.href}>
+              {item.label}
+            </a>
+          ))}
+        </nav>
 
-        <KontextAssistent
-          open={assistentOffen}
-          introReady={introReady}
-          aktiverModus={aktiverModus}
-          onToggle={schalteAssistent}
-          onHighlightSkills={markiereSkills}
-        />
+        <div className="header-actions">
+          <button className="menu-toggle" type="button" onClick={() => setMobileMenuOffen(true)} aria-label="Menue oeffnen">
+            <span />
+            <span />
+            <span />
+          </button>
+          <a className="btn primary" href="#contact">
+            Kontakt
+          </a>
+        </div>
+      </header>
+
+      <div className={`mobile-menu ${mobileMenuOffen ? "is-open" : ""}`} aria-hidden={!mobileMenuOffen}>
+        <div className="mobile-scrim" onClick={() => setMobileMenuOffen(false)} />
+        <div className="mobile-panel">
+          <div className="mobile-head">
+            <div className="logo-mark small">KK</div>
+            <button className="icon-btn" type="button" onClick={() => setMobileMenuOffen(false)} aria-label="Menue schliessen">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+                <path d="M6 6 18 18M18 6 6 18" />
+              </svg>
+            </button>
+          </div>
+          <nav className="mobile-nav">
+            {navItems.map((item) => (
+              <a key={item.href} href={item.href} onClick={() => setMobileMenuOffen(false)}>
+                {item.label}
+              </a>
+            ))}
+          </nav>
+          <div className="mobile-actions">
+            <a className="btn primary" href="#contact" onClick={() => setMobileMenuOffen(false)}>
+              Kontakt
+            </a>
+          </div>
+        </div>
       </div>
+
+      <main className="content">
+        <div className="layout-grid">
+          <div className="main-column">
+            <section className="hero" id="top">
+              <div className="hero-main">
+                <p className="eyebrow" data-reveal>Full-stack & AI</p>
+                <h1 className="hero-title" data-reveal>Schlanke Produkte, klare Wirkung.</h1>
+                <p className="hero-lede" data-reveal>
+                  Discovery in Tagen, Delivery in Wochen. Fokus auf Nutzwert, Performance und klare Architektur.
+                </p>
+                <div className="hero-actions" data-reveal>
+                  <a className="btn primary" href="#projects">
+                    Projekte ansehen
+                  </a>
+                  <a className="btn ghost" href="#contact">
+                    Kontakt aufnehmen
+                  </a>
+                </div>
+              </div>
+
+              <div className="hero-panel">
+                <div className="hero-card" data-reveal>
+                  <div className="hero-card-top">
+                    <span className="eyebrow">Letzter Case</span>
+                    <span className="capsule accent">Healthcare</span>
+                  </div>
+                  <h3>Healthcare DICOM Prueftool</h3>
+                  <p>Technische Tests fuer PACS/RIS mit Python, Flask, LDAP-Login und DICOM-Workflows.</p>
+                  <div className="tag-row">
+                    <span>Python</span>
+                    <span>Flask</span>
+                    <span>pynetdicom</span>
+                    <span>Automated Tests</span>
+                  </div>
+                </div>
+
+                <div className="hero-stats" data-reveal>
+                  <div className="stat-card">
+                    <span className="stat-value">CI/CD</span>
+                    <span>Live Deployments</span>
+                  </div>
+                  <div className="stat-card">
+                    <span className="stat-value">3</span>
+                    <span>Sprachen: DE / EN / PL</span>
+                  </div>
+                  <div className="stat-card">
+                    <span className="stat-value">LLM</span>
+                    <span>Assistenz & Automation</span>
+                  </div>
+                </div>
+
+                <div className="hero-card" data-reveal>
+                  <p className="eyebrow">Kernstack</p>
+                  <div className="stack-row">
+                    {kernStack.map((item) => (
+                      <span key={item} className="stack-chip">
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section className="section-block" id="facts">
+              <div className="section-heading">
+                <span className="section-index">01</span>
+                <div>
+                  <p className="section-eyebrow">Fakten</p>
+                  <h2 className="section-title">Kurz und konkret</h2>
+                </div>
+              </div>
+              <div className="facts-grid">
+                {fakty.map((fakt) => (
+                  <article key={fakt.value + fakt.label} className="fact-card" data-reveal>
+                    <div className="fact-value">{fakt.value}</div>
+                    <div className="fact-label">{fakt.label}</div>
+                  </article>
+                ))}
+              </div>
+            </section>
+
+            <section className="section-block" id="projects">
+              <div className="section-heading">
+                <span className="section-index">02</span>
+                <div>
+                  <p className="section-eyebrow">Projekte</p>
+                  <h2 className="section-title">Ausgewaehlte Arbeiten</h2>
+                </div>
+              </div>
+              <div className="project-list">
+                {projekte.map((projekt, index) => {
+                  const nummer = String(index + 1).padStart(2, "0");
+                  return (
+                    <article key={projekt.titel} className="project-card" data-reveal>
+                      <div className="project-media" data-media onClick={() => setAusgewaehltesProjekt(projekt)}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={projekt.image.src} alt={projekt.alt} loading="lazy" />
+                        <span className="project-focus">{projekt.fokus}</span>
+                      </div>
+                      <div className="project-info">
+                        <div className="project-top">
+                          <h3 className="project-title">{projekt.titel}</h3>
+                          <span className="project-index">{nummer}</span>
+                        </div>
+                        <p>{projekt.beschreibung}</p>
+                        <div className="tag-row">
+                          {projekt.stack.slice(0, 4).map((tech) => (
+                            <span key={tech}>{tech}</span>
+                          ))}
+                        </div>
+                        <div className="project-actions">
+                          <a className="btn ghost small" href={projekt.link} target="_blank" rel="noreferrer">
+                            Zum Projekt
+                          </a>
+                          <button className="btn link" type="button" onClick={() => setAusgewaehltesProjekt(projekt)}>
+                            Details
+                          </button>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+
+            <section className="section-block" id="skills">
+              <div className="section-heading">
+                <span className="section-index">03</span>
+                <div>
+                  <p className="section-eyebrow">Skillmap</p>
+                  <h2 className="section-title">Stack & Schwerpunkte</h2>
+                </div>
+                <span className="capsule subtle">Assistent markiert passende Skills</span>
+              </div>
+
+              <div className="stack-row wide" data-reveal>
+                {kernStack.map((item) => (
+                  <span key={item} className="stack-chip">
+                    {item}
+                  </span>
+                ))}
+              </div>
+
+              <div className="skills-grid">
+                {skillGruppen.map((gruppe) => (
+                  <article key={gruppe.id} className="skill-card" data-reveal>
+                    <div className="skill-head">
+                      <h3>{gruppe.titel}</h3>
+                      <p>{gruppe.beschreibung}</p>
+                    </div>
+                    <div className="skill-tags">
+                      {sichtbareSkills(gruppe.skills).map((skill) => {
+                        const markiert = eindeutigeMarkierungen.includes(skill.name);
+                        return (
+                          <span key={skill.name} className={markiert ? "is-hit" : ""}>
+                            {skill.name}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </article>
+                ))}
+              </div>
+
+              <div className="skills-toggle" data-reveal>
+                <button className="btn ghost" type="button" onClick={() => setZeigeAlleSkills((prev) => !prev)}>
+                  {zeigeAlleSkills ? "Weniger anzeigen" : "Mehr Skills anzeigen"}
+                </button>
+              </div>
+            </section>
+
+            <section className="section-block" id="contact">
+              <div className="section-heading">
+                <span className="section-index">04</span>
+                <div>
+                  <p className="section-eyebrow">Kontakt</p>
+                  <h2 className="section-title">Lass uns sprechen</h2>
+                </div>
+              </div>
+              <div className="contact-grid">
+                {kontaktWege.map((kontakt) => (
+                  <a key={kontakt.label} href={kontakt.href} className="contact-card" target="_blank" rel="noreferrer" data-reveal>
+                    <span className="capsule subtle">{kontakt.hint}</span>
+                    <h3>{kontakt.label}</h3>
+                    <p>{kontakt.value}</p>
+                  </a>
+                ))}
+              </div>
+            </section>
+
+            <footer className="footer">
+              <p>Offen fuer Projekte 2026. Berlin + Remote.</p>
+            </footer>
+          </div>
+
+          <aside className="assistant-column" id="assistant" data-reveal>
+            <KontextAssistent
+              open={true}
+              introReady={true}
+              aktiverModus="ueberblick"
+              onToggle={() => {}}
+              onHighlightSkills={setMarkierteSkills}
+              showToggle={false}
+            />
+          </aside>
+        </div>
+      </main>
+
+      <button
+        className={`scroll-top ${scrollTopSichtbar ? "is-visible" : ""}`}
+        type="button"
+        aria-label="Zurueck nach oben"
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+          <path d="M12 19V5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="m6 11 6-6 6 6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+
+      {ausgewaehltesProjekt && (
+        <div className="project-modal" role="dialog" aria-modal="true" onClick={() => setAusgewaehltesProjekt(null)}>
+          <div className="project-modal-card" onClick={(event) => event.stopPropagation()}>
+            <div className="project-modal-media">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={ausgewaehltesProjekt.image.src} alt={ausgewaehltesProjekt.alt} />
+            </div>
+            <div className="project-modal-content">
+              <span className="capsule subtle">{ausgewaehltesProjekt.fokus}</span>
+              <h3>{ausgewaehltesProjekt.titel}</h3>
+              <p>{ausgewaehltesProjekt.beschreibung}</p>
+              <div className="tag-row">
+                {ausgewaehltesProjekt.stack.map((tech) => (
+                  <span key={tech}>{tech}</span>
+                ))}
+              </div>
+              <div className="project-actions">
+                <a className="btn ghost" href={ausgewaehltesProjekt.link} target="_blank" rel="noreferrer">
+                  Zum Projekt
+                </a>
+                <button className="btn primary" type="button" onClick={() => setAusgewaehltesProjekt(null)}>
+                  Schliessen
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

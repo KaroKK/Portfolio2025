@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import "../styles/sidebrain.css";
@@ -102,7 +102,7 @@ const normalisiereText = (text: string) => {
     .trim();
 };
 
-// Prüft, ob ein Begriff im Text vorkommt – mit Wortgrenzen, damit kurze Tokens nicht falsch matchen.
+// Prüft, ob ein Begriff im Text vorkommt - mit Wortgrenzen, damit kurze Tokens nicht falsch matchen.
 const trifftBegriff = (text: string, term: string) => {
   const candidate = term.toLowerCase().trim();
   if (!candidate) return false;
@@ -134,7 +134,7 @@ const humanisiereAuswertung = (text: string) => {
     { pattern: /\b(exzellent|hervorragend|herausragend|ausgezeichnet|erstklassig)\b/gi, ersatz: "gut" },
     { pattern: /\bbeeindruckend(e[nrsm]?|es)?\b/gi, ersatz: "" },
     { pattern: /\bausgeprägt(e[nrsm]?|es)?\b/gi, ersatz: "klar" },
-    { pattern: /\bbreit gefächerte?n?\b/gi, ersatz: "breite" },
+    { pattern: /\bbreit gefächert(e?n?)\b/gi, ersatz: "breite" },
     { pattern: /\bstark(e[nrsm]?|es)?\b/gi, ersatz: "" },
   ];
 
@@ -160,6 +160,7 @@ type KontextAssistentProps = {
   aktiverModus: ModusId;
   onToggle: () => void;
   onHighlightSkills: (skills: string[]) => void;
+  showToggle?: boolean;
 };
 
 type TrefferProjekt = {
@@ -173,7 +174,14 @@ type TrefferProjekt = {
 const personaKontext =
   "Sprachen: Deutsch (C1), Englisch (C1), Polnisch (Muttersprache). Standort: Berlin. Remote/Homeoffice bevorzugt, offen für Hybrid. Anspruch: automatisierte Tests, Clean Code, Architektur, Code-Qualität.";
 
-export default function KontextAssistent({ open, introReady, aktiverModus, onToggle, onHighlightSkills }: KontextAssistentProps) {
+export default function KontextAssistent({
+  open,
+  introReady,
+  aktiverModus,
+  onToggle,
+  onHighlightSkills,
+  showToggle = true,
+}: KontextAssistentProps) {
   const modusLabel: Record<ModusId, string> = {
     ueberblick: "About me",
     skills: "Skills",
@@ -181,7 +189,7 @@ export default function KontextAssistent({ open, introReady, aktiverModus, onTog
     kontakt: "Kontakt",
   };
 
-  const grundNotiz = "Passe ich zu deinem Projekt/ Job? ";
+  const grundNotiz = "Passe ich zu deinem Projekt/ Job?";
   const [notiz, setNotiz] = useState(grundNotiz);
   const [eingabe, setEingabe] = useState("");
   const [laedt, setLaedt] = useState(false);
@@ -198,7 +206,7 @@ export default function KontextAssistent({ open, introReady, aktiverModus, onTog
 
   // Prüft grob, welche Projekte thematisch zu den erkannten Skills passen.
   const findePassendeProjekte = (skills: string[]) => {
-    const skillsLower = skills.map((s) => s.toLowerCase());
+    const skillsLower = skills.map((skill) => skill.toLowerCase());
     return projekte
       .map((projekt) => {
         const match = projekt.stack.filter((tech) =>
@@ -206,7 +214,7 @@ export default function KontextAssistent({ open, introReady, aktiverModus, onTog
         );
         return { ...projekt, match };
       })
-      .filter((p) => p.match.length);
+      .filter((projekt) => projekt.match.length);
   };
 
   const analysiereText = async () => {
@@ -237,7 +245,7 @@ export default function KontextAssistent({ open, introReady, aktiverModus, onTog
           const hits = candidates.filter((term) => trifftBegriff(textGesamt, term));
           if (!hits.length) return null;
           const pos = Math.min(
-            ...candidates.map((term) => erstePositionDesBegriffs(textGesamt, term)).filter((v) => v >= 0)
+            ...candidates.map((term) => erstePositionDesBegriffs(textGesamt, term)).filter((value) => value >= 0)
           );
           return { skill, pos };
         })
@@ -272,12 +280,12 @@ export default function KontextAssistent({ open, introReady, aktiverModus, onTog
   const baueNotizListe = (text: string) => {
     const zeilen = text
       .replace(/-\s+/g, "\n- ")
-      .replace(/ƒ?T'?¶ô¶®\s*/g, "\n- ")
+      .replace(/Ÿ?T'?ô“ô©\s*/g, "\n- ")
       .split("\n")
-      .map((z) => z.trim().replace(/^-+\s*/, ""))
-      .filter((z) => {
-        if (!z.length) return false;
-        const lower = z.toLowerCase();
+      .map((zeile) => zeile.trim().replace(/^-+\s*/, ""))
+      .filter((zeile) => {
+        if (!zeile.length) return false;
+        const lower = zeile.toLowerCase();
         if (lower.includes("projekte")) return false;
         if (lower.includes("stack:")) return false;
         if (lower.includes("rolle/ergebnis")) return false;
@@ -306,11 +314,13 @@ export default function KontextAssistent({ open, introReady, aktiverModus, onTog
           <h3>Assistent</h3>
           <span className="brain-chip">{modusLabel[aktiverModus]} Modus</span>
         </div>
+        {showToggle && (
         <button className="brain-icon-btn" onClick={onToggle} aria-label={open ? "Assistent schließen" : "Assistent öffnen"}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path d="M6 6 18 18M18 6 6 18" strokeWidth="1.6" />
           </svg>
         </button>
+        )}
       </div>
 
       <div className="brain-body">
