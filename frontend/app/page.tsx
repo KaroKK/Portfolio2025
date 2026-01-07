@@ -5,10 +5,9 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "./styles/shell.css";
 import "./styles/sidebrain.css";
-import ModusNavigation from "./components/ModusNavigation";
-import ModusBuehne from "./components/ModusBuehne";
 import KontextAssistent from "./components/KontextAssistent";
-import { ModusId } from "./types/modi";
+import { projekte } from "./data/projects";
+import { skillGruppen } from "./data/skills";
 
 const navItems = [
   { label: "Start", href: "#top" },
