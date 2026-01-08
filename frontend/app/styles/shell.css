@@ -974,6 +974,7 @@
     margin-bottom: 12px;
     justify-self: stretch;
     width: 100%;
+    padding-top: 30px;
   }
 
   .hero {
@@ -984,6 +985,27 @@
     width: min(98vw, 1200px);
     max-height: 92vh;
     grid-template-columns: 1fr;
+  }
+
+  .content {
+    max-width: 100%;
+    padding: 0 clamp(16px, 4vw, 26px);
+  }
+
+  .section-block {
+    padding-left: clamp(12px, 4vw, 24px);
+    padding-right: clamp(12px, 4vw, 24px);
+  }
+
+  .project-reel {
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 12px;
+  }
+
+  .project-card {
+    flex: 0 0 min(100%, 460px);
   }
 }
 
