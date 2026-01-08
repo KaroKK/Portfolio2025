@@ -1179,9 +1179,10 @@
     padding-left: clamp(3vw, 36px, 84px);
     padding-right: clamp(3vw, 36px, 84px);
     padding-bottom: 14px;
-    width: min(115vw, calc(100% + 1300px));
-    margin-left: auto;
-    margin-right: auto;
+    width: min(110vw, 1500px);
+    max-width: none;
+    margin-left: 50%;
+    transform: translateX(-50%);
   }
 
   .project-list {
