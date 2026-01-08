@@ -16,8 +16,7 @@ const manrope = Manrope({
 });
 
 export const metadata = {
-  title: "Karolina Kuster - Full-stack & AI Engineering",
-  description: "Web, AI und Produktentwicklung mit Fokus auf klare Architektur und Delivery.",
+  title: "Karolina Kuster - Full-stack & AI",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

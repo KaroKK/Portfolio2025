@@ -14,16 +14,14 @@ const navItems = [
   { label: "Fakten", href: "#facts" },
   { label: "Projekte", href: "#projects" },
   { label: "Skills", href: "#skills" },
-  { label: "Kontakt", href: "#contact" },
 ];
 
 const kontaktWege = [
   { label: "Mail", value: "kuster.karolina@yahoo.com", href: "mailto:kuster.karolina@yahoo.com", hint: "Antwort < 24h" },
-  { label: "LinkedIn", value: "linkedin.com/in/karolina-kuster-ba278b394/", href: "https://www.linkedin.com/in/karolina-kuster-ba278b394/", hint: "Vernetzen" },
-  { label: "GitHub", value: "github.com/#", href: "https://github.com/#", hint: "Code & Projekte" },
+  { label: "LinkedIn", value: "linkedin.com/", href: "https://www.linkedin.com/in/karolina-kuster-ba278b394/", hint: "Vernetzen" },
+  { label: "GitHub", value: "github.com/", href: "https://github.com/#", hint: "Code & Projekte" },
 ];
 
-const kernStack = ["TypeScript", "Next.js", "React", "Python", "FastAPI", "Flask", "Docker", "CI/CD", "PostgreSQL", ".NET"];
 
 const fakty = [
   { value: "10+", label: "projekte (web, iot, healthcare)" },
@@ -41,6 +39,7 @@ export default function HomePage() {
   const [zeigeAlleSkills, setZeigeAlleSkills] = useState(false);
   const [mobileMenuOffen, setMobileMenuOffen] = useState(false);
   const [scrollTopSichtbar, setScrollTopSichtbar] = useState(false);
+  const [cookieSichtbar, setCookieSichtbar] = useState(false);
 
   const eindeutigeMarkierungen = useMemo(() => Array.from(new Set(markierteSkills)), [markierteSkills]);
   const sichtbareSkills = (skills: { name: string }[]) => (zeigeAlleSkills ? skills : skills.slice(0, 6));
@@ -61,11 +60,32 @@ export default function HomePage() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    try {
+      const gespeichert = window.localStorage.getItem("kk-cookie-consent");
+      if (!gespeichert) setCookieSichtbar(true);
+    } catch {
+      setCookieSichtbar(true);
+    }
+  }, []);
+
+  const akzeptiereCookies = () => {
+    try {
+      window.localStorage.setItem("kk-cookie-consent", "accepted");
+      document.cookie = "kk-cookie-consent=accepted; max-age=31536000; path=/";
+    } catch {
+      // Ignore storage errors and just hide the banner.
+    }
+    setCookieSichtbar(false);
+  };
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     gsap.registerPlugin(ScrollTrigger);
+    const mm = gsap.matchMedia();
     const ctx = gsap.context(() => {
-      ScrollTrigger.batch("[data-reveal]", {
+      ScrollTrigger.batch("[data-reveal]:not(.project-card)", {
         start: "top 85%",
         onEnter: (batch) => {
           gsap.fromTo(
@@ -109,9 +129,74 @@ export default function HomePage() {
           }
         );
       });
+
+      const animateProjectCards = (distance: number) => {
+        ScrollTrigger.batch(".project-card", {
+          start: "top 85%",
+          onEnter: (batch) => {
+            gsap.fromTo(
+              batch,
+              { x: distance, opacity: 0 },
+              { x: 0, opacity: 1, duration: 0.7, ease: "power3.out", stagger: 0.14 }
+            );
+          },
+          once: true,
+        });
+      };
+
+      mm.add("(min-width: 900px)", () => {
+        const sekcja = document.querySelector<HTMLElement>("#projects");
+        const tor = sekcja?.querySelector<HTMLElement>(".project-reel");
+        const liste = sekcja?.querySelector<HTMLElement>(".project-list");
+        const track = sekcja?.querySelector<HTMLElement>(".project-track");
+        const fill = sekcja?.querySelector<HTMLElement>(".project-track-fill");
+        if (!sekcja || !tor || !liste || !track || !fill) return;
+
+        const odleglosc = () => Math.max(0, liste.scrollWidth - tor.clientWidth);
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: sekcja,
+            start: "top top+=80",
+            end: () => `+=${odleglosc() + 240}`,
+            scrub: 1.4,
+            pin: true,
+            pinSpacing: true,
+            anticipatePin: 1,
+          },
+        });
+
+        tl.to(liste, { x: () => -odleglosc(), ease: "none" }, 0)
+          .fromTo(fill, { scaleX: 0.08 }, { scaleX: 1, ease: "none" }, 0)
+          .fromTo(track, { scaleY: 0.7, opacity: 0.7 }, { scaleY: 1, opacity: 1, ease: "none" }, 0)
+          .fromTo(
+            ".project-media img",
+            {
+              xPercent: (index: number) => (index % 2 === 0 ? 12 : -12),
+              yPercent: (index: number) => (index % 3 === 0 ? 6 : -6),
+            },
+            {
+              xPercent: (index: number) => (index % 2 === 0 ? -12 : 12),
+              yPercent: (index: number) => (index % 3 === 0 ? -6 : 6),
+              ease: "none",
+            },
+            0
+          );
+
+        return () => {
+          tl.scrollTrigger?.kill();
+          tl.kill();
+        };
+      });
+
+      mm.add("(max-width: 899px)", () => {
+        animateProjectCards(60);
+      });
     }, rootRef);
 
-    return () => ctx.revert();
+    return () => {
+      mm.revert();
+      ctx.revert();
+    };
   }, []);
 
   return (
@@ -128,7 +213,6 @@ export default function HomePage() {
           <div className="logo-mark">KK</div>
           <div className="logo-copy">
             <span className="logo-title">Karolina Kuster</span>
-            <span className="logo-sub">Full-stack & AI Engineering</span>
           </div>
         </div>
 
@@ -186,15 +270,13 @@ export default function HomePage() {
                 <p className="eyebrow" data-reveal>Full-stack & AI</p>
                 <h1 className="hero-title" data-reveal>Schlanke Produkte, klare Wirkung.</h1>
                 <p className="hero-lede" data-reveal>
-                  Discovery in Tagen, Delivery in Wochen. Fokus auf Nutzwert, Performance und klare Architektur.
+                  Discovery in Tagen, Delivery in Wochen. Fokus auf Performance und klare Architektur.
                 </p>
                 <div className="hero-actions" data-reveal>
                   <a className="btn primary" href="#projects">
                     Projekte ansehen
                   </a>
-                  <a className="btn ghost" href="#contact">
-                    Kontakt aufnehmen
-                  </a>
+                 
                 </div>
               </div>
 
@@ -214,31 +296,18 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="hero-stats" data-reveal>
-                  <div className="stat-card">
-                    <span className="stat-value">CI/CD</span>
-                    <span>Live Deployments</span>
-                  </div>
-                  <div className="stat-card">
-                    <span className="stat-value">3</span>
-                    <span>Sprachen: DE / EN / PL</span>
-                  </div>
-                  <div className="stat-card">
-                    <span className="stat-value">LLM</span>
-                    <span>Assistenz & Automation</span>
+                <div className="hero-card" data-reveal>
+                  <p className="eyebrow">Wie ich arbeite</p>
+                  <h3>Ich entwickle Frontend und Backend so, dass alles Hand in Hand funktioniert.</h3>
+                  <p>Ich bringe Klarheit in Anforderungen, schreibe verständlichen Code und setze auf Lösungen, die man auch im Alltag noch versteht.</p>
+                  <div className="tag-row">
+                    <span>Frontend</span>
+                    <span>Backend</span>
+                    <span>Automation</span>
                   </div>
                 </div>
 
-                <div className="hero-card" data-reveal>
-                  <p className="eyebrow">Kernstack</p>
-                  <div className="stack-row">
-                    {kernStack.map((item) => (
-                      <span key={item} className="stack-chip">
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+                
               </div>
             </section>
 
@@ -265,42 +334,47 @@ export default function HomePage() {
                 <span className="section-index">02</span>
                 <div>
                   <p className="section-eyebrow">Projekte</p>
-                  <h2 className="section-title">Ausgewaehlte Arbeiten</h2>
+                  <h2 className="section-title">Ausgewählte Arbeiten</h2>
                 </div>
               </div>
-              <div className="project-list">
-                {projekte.map((projekt, index) => {
-                  const nummer = String(index + 1).padStart(2, "0");
-                  return (
-                    <article key={projekt.titel} className="project-card" data-reveal>
-                      <div className="project-media" data-media onClick={() => setAusgewaehltesProjekt(projekt)}>
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={projekt.image.src} alt={projekt.alt} loading="lazy" />
-                        <span className="project-focus">{projekt.fokus}</span>
-                      </div>
-                      <div className="project-info">
-                        <div className="project-top">
-                          <h3 className="project-title">{projekt.titel}</h3>
-                          <span className="project-index">{nummer}</span>
+              <div className="project-reel">
+                <div className="project-track" aria-hidden="true">
+                  <span className="project-track-fill" />
+                </div>
+                <div className="project-list">
+                  {projekte.map((projekt, index) => {
+                    const nummer = String(index + 1).padStart(2, "0");
+                    return (
+                      <article key={projekt.titel} className="project-card" data-reveal>
+                        <div className="project-media" onClick={() => setAusgewaehltesProjekt(projekt)}>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={projekt.image.src} alt={projekt.alt} loading="lazy" data-media />
+                          <span className="project-focus">{projekt.fokus}</span>
                         </div>
-                        <p>{projekt.beschreibung}</p>
-                        <div className="tag-row">
-                          {projekt.stack.slice(0, 4).map((tech) => (
-                            <span key={tech}>{tech}</span>
-                          ))}
+                        <div className="project-info">
+                          <div className="project-top">
+                            <h3 className="project-title">{projekt.titel}</h3>
+                            <span className="project-index">{nummer}</span>
+                          </div>
+                          <p>{projekt.beschreibung}</p>
+                          <div className="tag-row">
+                            {projekt.stack.slice(0, 4).map((tech) => (
+                              <span key={tech}>{tech}</span>
+                            ))}
+                          </div>
+                          <div className="project-actions">
+                            <a className="btn ghost small" href={projekt.link} target="_blank" rel="noreferrer">
+                              Zum Projekt
+                            </a>
+                            <button className="btn link" type="button" onClick={() => setAusgewaehltesProjekt(projekt)}>
+                              Details
+                            </button>
+                          </div>
                         </div>
-                        <div className="project-actions">
-                          <a className="btn ghost small" href={projekt.link} target="_blank" rel="noreferrer">
-                            Zum Projekt
-                          </a>
-                          <button className="btn link" type="button" onClick={() => setAusgewaehltesProjekt(projekt)}>
-                            Details
-                          </button>
-                        </div>
-                      </div>
-                    </article>
-                  );
-                })}
+                      </article>
+                    );
+                  })}
+                </div>
               </div>
             </section>
 
@@ -314,14 +388,7 @@ export default function HomePage() {
                 <span className="capsule subtle">Assistent markiert passende Skills</span>
               </div>
 
-              <div className="stack-row wide" data-reveal>
-                {kernStack.map((item) => (
-                  <span key={item} className="stack-chip">
-                    {item}
-                  </span>
-                ))}
-              </div>
-
+              
               <div className="skills-grid">
                 {skillGruppen.map((gruppe) => (
                   <article key={gruppe.id} className="skill-card" data-reveal>
@@ -369,8 +436,10 @@ export default function HomePage() {
               </div>
             </section>
 
-            <footer className="footer">
-              <p>Offen fuer Projekte 2026. Berlin + Remote.</p>
+            <footer className="footer footer-band">
+              <div className="footer-band-inner">
+                <span>@Karolina Kuster 2026</span>
+              </div>
             </footer>
           </div>
 
@@ -427,6 +496,20 @@ export default function HomePage() {
           </div>
         </div>
       )}
+
+      <div className={`cookie-banner ${cookieSichtbar ? "is-visible" : ""}`} role="region" aria-label="Cookie Hinweis">
+        <div className="cookie-card">
+          <div>
+            <p className="cookie-title">Cookies & Datenschutz</p>
+            <p className="cookie-copy">
+              Diese Seite nutzt Cookies, um die Bedienung zu verbessern. Mit Klick auf "Akzeptieren" stimmst du zu.
+            </p>
+          </div>
+          <button className="btn primary" type="button" onClick={akzeptiereCookies}>
+            Akzeptieren
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

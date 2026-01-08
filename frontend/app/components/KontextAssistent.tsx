@@ -183,7 +183,7 @@ export default function KontextAssistent({
   showToggle = true,
 }: KontextAssistentProps) {
   const modusLabel: Record<ModusId, string> = {
-    ueberblick: "About me",
+    ueberblick: "Projekte",
     skills: "Skills",
     projekte: "Projekte",
     kontakt: "Kontakt",
