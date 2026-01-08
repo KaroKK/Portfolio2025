@@ -298,8 +298,8 @@
 
 .layout-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(320px, 0.95fr);
-  gap: clamp(18px, 2.8vw, 48px);
+  grid-template-columns: minmax(0, 1.7fr) minmax(320px, 0.85fr);
+  gap: clamp(20px, 3vw, 52px);
   align-items: start;
   position: relative;
 }
@@ -1007,19 +1007,26 @@
   .project-card {
     flex: 0 0 min(100%, 460px);
   }
+
+  .project-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: 100%;
+  }
 }
 
 @media (min-width: 900px) {
   .project-reel {
-    height: clamp(540px, 70vh, 860px);
+    height: clamp(560px, 64vh, 820px);
     overflow: hidden;
     display: grid;
     align-items: start;
     align-content: start;
-    padding-left: clamp(2vw, 20px, 40px);
-    padding-right: clamp(2vw, 20px, 40px);
-    padding-bottom: 10px;
-    width: 100%;
+    padding-left: clamp(3vw, 36px, 84px);
+    padding-right: clamp(3vw, 36px, 84px);
+    padding-bottom: 14px;
+    width: min(100vw, calc(100% + 520px));
     margin: 0 auto;
   }
 
@@ -1036,8 +1043,8 @@
   }
 
   .project-card {
-    flex: 0 0 clamp(480px, 64vw, 780px);
-    min-height: clamp(280px, 48vh, 360px);
+    flex: 0 0 clamp(540px, 68vw, 880px);
+    min-height: clamp(360px, 52vh, 460px);
   }
 }
 
