@@ -298,23 +298,23 @@
 
 .layout-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(360px, 520px);
-  gap: clamp(24px, 3.2vw, 52px);
+  grid-template-columns: minmax(0, 1.5fr) minmax(320px, 0.95fr);
+  gap: clamp(18px, 2.8vw, 48px);
   align-items: start;
   position: relative;
 }
 
  
-.assistant-column {
-  position: sticky;
-  top: 130px;
-  align-self: start;
-  scroll-margin-top: 120px;
-  min-width: 0;
-  z-index: 2;
-  justify-self: end;
-  width: min(100%, 520px);
-}
+  .assistant-column {
+    position: sticky;
+    top: 130px;
+    align-self: start;
+    scroll-margin-top: 120px;
+    min-width: 0;
+    z-index: 2;
+    justify-self: end;
+    width: min(100%, 520px);
+  }
 
 .hero {
   display: grid;
@@ -457,7 +457,7 @@
 
 #projects.section-block {
   gap: 20px;
-  padding: clamp(24px, 4vw, 52px) 0 4px;
+  padding: clamp(24px, 4vw, 52px) 0 clamp(48px, 5vw, 80px);
 }
 
 #skills.section-block {
@@ -560,42 +560,37 @@
 }
 
 .project-card {
-  display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-  gap: 24px;
-  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 28px;
   border-radius: var(--radius-lg);
-  border: 1px solid var(--glass-border);
-  background: var(--glass-strong);
-  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   min-width: 0;
   overflow: hidden;
   align-items: start;
-}
-
-.project-card:nth-child(even) {
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
-}
-
-.project-card:nth-child(even) .project-media {
-  order: 2;
+  position: relative;
 }
 
 .project-media {
+  grid-column: 1 / -1;
   position: relative;
   display: grid;
   place-items: center;
   border-radius: var(--radius-md);
   overflow: hidden;
   width: 100%;
-  height: clamp(280px, 34vw, 460px);
   cursor: pointer;
   border: 1px solid var(--glass-border);
   background: rgba(255, 255, 255, 0.35);
   min-width: 0;
   align-self: start;
+  aspect-ratio: 16 / 9;
+  min-height: 320px;
 }
 
 .project-media img {
@@ -626,6 +621,7 @@
   display: grid;
   gap: 10px;
   min-width: 0;
+  margin-top: 12px;
 }
 
 .project-top {
@@ -959,9 +955,9 @@
 
 .project-modal .tag-row span {
   display: inline-block;
-  padding: 0 6px;
+  padding: 13px 20px;
   min-height: unset;
-  height: auto;
+  height: 40px;
   font-size: 11px;
   line-height: 1;
   white-space: nowrap;
@@ -984,15 +980,6 @@
     grid-template-columns: 1fr;
   }
 
-  .project-card,
-  .project-card:nth-child(even) {
-    grid-template-columns: 1fr;
-  }
-
-  .project-card:nth-child(even) .project-media {
-    order: 0;
-  }
-
   .project-modal-card {
     width: min(98vw, 1200px);
     max-height: 92vh;
@@ -1002,62 +989,33 @@
 
 @media (min-width: 900px) {
   .project-reel {
-    height: clamp(520px, 68vh, 820px);
+    height: clamp(560px, 72vh, 880px);
     overflow: hidden;
     display: grid;
     align-items: start;
     align-content: start;
-    padding: 0 8px 8px;
-    width: min(100vw, calc(100% + 320px));
+    padding-left: clamp(2vw, 20px, 40px);
+    padding-right: clamp(2vw, 20px, 40px);
+    padding-bottom: 10px;
+    width: min(100vw, calc(100% + 260px));
     margin: 0 auto;
   }
 
-  .project-track {
-    display: block;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    height: clamp(14px, 2.4vw, 24px);
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.35);
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--shadow-tight);
-    pointer-events: none;
-    z-index: 0;
-    transform-origin: center;
-  }
-
+  .project-track,
   .project-track-fill {
-    display: block;
-    height: 100%;
-    width: 100%;
-    border-radius: inherit;
-    transform: scaleX(0.08);
-    transform-origin: left;
-    background: linear-gradient(120deg, rgba(43, 110, 243, 0.75), rgba(31, 154, 138, 0.6));
-    box-shadow: 0 0 30px rgba(43, 110, 243, 0.35);
+    display: none;
   }
 
   .project-list {
     display: flex;
-    gap: 22px;
+    gap: 20px;
     width: max-content;
     will-change: transform;
   }
 
   .project-card {
-    flex: 0 0 clamp(520px, 74vw, 880px);
-  }
-
-  .project-card,
-  .project-card:nth-child(even) {
-    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
-  }
-
-  .project-card:nth-child(even) .project-media {
-    order: 2;
+    flex: 0 0 clamp(480px, 64vw, 780px);
+    min-height: clamp(280px, 48vh, 360px);
   }
 }
 
@@ -1123,3 +1081,6 @@
     display: none;
   }
 }
+
+
+
