@@ -1019,7 +1019,7 @@
     padding-left: clamp(2vw, 20px, 40px);
     padding-right: clamp(2vw, 20px, 40px);
     padding-bottom: 10px;
-    width: min(100vw, calc(100% + 260px));
+    width: 100%;
     margin: 0 auto;
   }
 
