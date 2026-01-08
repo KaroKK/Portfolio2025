@@ -234,7 +234,7 @@ export default function HomePage() {
             Kontakt
           </a>
         </div>
-      </header>   
+      </header>
       <div className={`mobile-menu ${mobileMenuOffen ? "is-open" : ""}`} aria-hidden={!mobileMenuOffen}>
         <div className="mobile-scrim" onClick={() => setMobileMenuOffen(false)} />
         <div className="mobile-panel">
@@ -443,18 +443,18 @@ export default function HomePage() {
               open={true}
               introReady={true}
               aktiverModus="ueberblick"
-              onToggle={() => {}}
+              onToggle={() => { }}
               onHighlightSkills={setMarkierteSkills}
               showToggle={false}
             />
           </aside>
         </div>
       </main>
-     <footer className="footer footer-band">
-              <div className="footer-band-inner">
-                <span>@Karolina Kuster 2026</span>
-              </div>
-            </footer>
+      <footer className="footer footer-band">
+        <div className="footer-band-inner">
+          <span>@Karolina Kuster 2026</span>
+        </div>
+      </footer>
       <button
         className={`scroll-top ${scrollTopSichtbar ? "is-visible" : ""}`}
         type="button"
