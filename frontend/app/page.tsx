@@ -435,11 +435,7 @@ export default function HomePage() {
               </div>
             </section>
 
-            <footer className="footer footer-band">
-              <div className="footer-band-inner">
-                <span>@Karolina Kuster 2026</span>
-              </div>
-            </footer>
+       
           </div>
 
           <aside className="assistant-column" id="assistant" data-reveal>
@@ -454,7 +450,11 @@ export default function HomePage() {
           </aside>
         </div>
       </main>
-
+     <footer className="footer footer-band">
+              <div className="footer-band-inner">
+                <span>@Karolina Kuster 2026</span>
+              </div>
+            </footer>
       <button
         className={`scroll-top ${scrollTopSichtbar ? "is-visible" : ""}`}
         type="button"

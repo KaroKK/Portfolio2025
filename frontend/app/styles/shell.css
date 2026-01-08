@@ -1171,7 +1171,7 @@
 
 @media (min-width: 900px) {
   .project-reel {
-    height: clamp(560px, 64vh, 820px);
+    height: clamp(660px, 72vh, 980px);
     overflow: hidden;
     display: grid;
     align-items: start;
@@ -1179,8 +1179,9 @@
     padding-left: clamp(3vw, 36px, 84px);
     padding-right: clamp(3vw, 36px, 84px);
     padding-bottom: 14px;
-    width: min(100vw, calc(100% + 520px));
-    margin: 0 auto;
+    width: min(115vw, calc(100% + 1300px));
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .project-list {
@@ -1191,8 +1192,8 @@
   }
 
   .project-card {
-    flex: 0 0 clamp(540px, 68vw, 880px);
-    min-height: clamp(360px, 52vh, 460px);
+    flex: 0 0 clamp(500px, 62vw, 820px);
+    min-height: clamp(320px, 48vh, 420px);
   }
 }
 
