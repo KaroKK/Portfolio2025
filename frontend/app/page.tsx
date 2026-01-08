@@ -234,8 +234,7 @@ export default function HomePage() {
             Kontakt
           </a>
         </div>
-      </header>
-
+      </header>   
       <div className={`mobile-menu ${mobileMenuOffen ? "is-open" : ""}`} aria-hidden={!mobileMenuOffen}>
         <div className="mobile-scrim" onClick={() => setMobileMenuOffen(false)} />
         <div className="mobile-panel">

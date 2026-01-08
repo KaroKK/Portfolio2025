@@ -989,7 +989,7 @@
 
 @media (min-width: 900px) {
   .project-reel {
-    height: clamp(560px, 72vh, 880px);
+    height: clamp(540px, 70vh, 860px);
     overflow: hidden;
     display: grid;
     align-items: start;
