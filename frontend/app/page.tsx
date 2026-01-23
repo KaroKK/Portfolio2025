@@ -51,18 +51,19 @@ export default function HomePage() {
   const [zeigeAlleSkills] = useState(true);
   const [mobileMenuOffen, setMobileMenuOffen] = useState(false);
   const [scrollTopSichtbar, setScrollTopSichtbar] = useState(false);
-  const [cookieSichtbar, setCookieSichtbar] = useState(() => {
-    if (typeof window === "undefined") return false;
-    try {
-      return !window.localStorage.getItem("kk-cookie-consent");
-    } catch {
-      return true;
-    }
-  });
+  const [cookieSichtbar, setCookieSichtbar] = useState(false);
   const [cookieEinstellungenOffen, setCookieEinstellungenOffen] = useState(false);
 
   const eindeutigeMarkierungen = useMemo(() => Array.from(new Set(markierteSkills)), [markierteSkills]);
   const sichtbareSkills = (skills: { name: string }[]) => skills;
+
+  useEffect(() => {
+    try {
+      setCookieSichtbar(!window.localStorage.getItem("kk-cookie-consent"));
+    } catch {
+      setCookieSichtbar(true);
+    }
+  }, []);
 
   useEffect(() => {
     // Scroll-Button erst zeigen, wenn man ein Stück runter ist.
