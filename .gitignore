@@ -1,0 +1,33 @@
+# node / next
+node_modules/
+**/node_modules/
+.next/
+out/
+build/
+.turbo/
+*.tsbuildinfo
+next-env.d.ts
+
+# python
+venv/
+backend/venv/
+**/__pycache__/
+**/*.pyc
+.pytest_cache/
+.mypy_cache/
+.env.local
+
+# env
+.env*
+
+# IDE / tools
+.idea/
+.vscode/
+.eslintcache
+
+# logs / misc
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.DS_Store
